@@ -1,0 +1,5 @@
+URI = "dbbikes.cqmwlbbdrj4j.us-east-1.rds.amazonaws.com"
+PORT = "3306"
+DB = "dbbikes"
+USER ="admin"
+PASSWORD = "cardgames"
