@@ -13,8 +13,10 @@ import traceback
 def parseWeather(obj):
     return {'time' : datetime.fromtimestamp(int(obj['dt'])),
             'temp' : obj['temp'],
-            'humidity' : obj ['humidity'],
-            'description' : obj['weather'][0]['main']
+            'humidity' : obj['humidity'],
+            'wind_speed' : obj['wind_speed'],
+            'main' : obj['weather'][0]['main'],
+            'description' : obj['weather'][0]['description']
         }
 
 #stores data in weather database

@@ -13,7 +13,7 @@ import traceback
 def parseData(obj):
     try:
         date = datetime.fromtimestamp(int(obj['last_update']/1e3))
-    except:
+    except: #If last_update timestamp invalid, replace with current time.
         date = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
     return{'number': obj['number'],
         'status' : obj['status'],
@@ -23,7 +23,7 @@ def parseData(obj):
         'last_update': date
           }
 
-#store json_data in database
+#store bike data in database
 def store_to_db(json_data):
     engine = create_engine("mysql+mysqlconnector://{}:{}@{}:{}/{}".format(dbinfo.USER, dbinfo.PASSWORD, dbinfo.URI, dbinfo.PORT, dbinfo.DB), echo=True)
     metadata = sqla.MetaData(bind=engine)
@@ -37,10 +37,13 @@ def store_to_db(json_data):
         
 while True:
     try:
+        #get data
         response = requests.get(APIinfo.BIKE_URI, params={"apiKey": APIinfo.BIKE_APIKEY, "contract": APIinfo.BIKE_CONTRACT})
         
+        #store data
         store_to_db(json.loads(response.text))
         
+        #wait
         time.sleep(5*60)
     except:
         
