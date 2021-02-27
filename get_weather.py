@@ -9,13 +9,15 @@ import json
 import time
 import traceback
 
+#Parses weather obtained from API request
 def parseWeather(obj):
-    return {'time' : datetime.fromtimestamp(int(obj['dt']/1e3)),
+    return {'time' : datetime.fromtimestamp(int(obj['dt'])),
             'temp' : obj['temp'],
             'humidity' : obj ['humidity'],
             'description' : obj['weather'][0]['main']
         }
 
+#stores data in weather database
 def store_weather(json_data):
     engine = create_engine("mysql+mysqlconnector://{}:{}@{}:{}/{}".format(dbinfo.USER, dbinfo.PASSWORD, dbinfo.URI, dbinfo.PORT, dbinfo.DB), echo=True)
     metadata = sqla.MetaData(bind=engine)

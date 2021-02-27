@@ -9,6 +9,7 @@ import json
 import time
 import traceback
 
+#Parses data received. fixes n/a timestamps
 def parseData(obj):
     try:
         date = datetime.fromtimestamp(int(obj['last_update']/1e3))
@@ -22,6 +23,7 @@ def parseData(obj):
         'last_update': date
           }
 
+#store json_data in database
 def store_to_db(json_data):
     engine = create_engine("mysql+mysqlconnector://{}:{}@{}:{}/{}".format(dbinfo.USER, dbinfo.PASSWORD, dbinfo.URI, dbinfo.PORT, dbinfo.DB), echo=True)
     metadata = sqla.MetaData(bind=engine)
