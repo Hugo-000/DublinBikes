@@ -23,7 +23,7 @@ def parseData(obj):
           }
 
 def store_to_db(json_data):
-    engine = create_engine("mysql+mysqlconnector://{}:{}@{}:{}/{}".format(dbinfo.USER, dbinfo.PASSWORD, dbinfo.URI, dbinfo.PORT, dbinfo.DB), echo=True)
+    engine = create_engine("mysql+mysqlconnector://{}:{}@{}:{}/{}".format(dbinfo.USER, dbinfo.PASSWORD, dbinfo.URI, dbinfo.PORT, dbinfo.DB), echo=False)
     metadata = sqla.MetaData(bind=engine)
     availability = sqla.Table('availability', metadata, autoload=True)
 
@@ -40,6 +40,7 @@ while True:
         store_to_db(json.loads(response.text))
         
         time.sleep(5*60)
+        print("blah")
     except:
         
         print(traceback.format_exc())
