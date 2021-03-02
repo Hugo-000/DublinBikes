@@ -16,7 +16,8 @@ def parseWeather(obj):
             'humidity' : obj['humidity'],
             'wind_speed' : obj['wind_speed'],
             'main' : obj['weather'][0]['main'],
-            'description' : obj['weather'][0]['description']
+            'description' : obj['weather'][0]['description'],
+            'visibility' : obj['visibility']
         }
 
 #stores data in weather database
