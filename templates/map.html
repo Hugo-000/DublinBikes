@@ -13,8 +13,21 @@
     <script>
 
         let map;
+        
+
+        
+        
 
         function initMap() {
+            
+            
+         fetch("/availability").then(response =>{   
+             return response.json();   
+         }).then(availability_data => {  
+             console.log("availability data:", availability_data);      
+
+            
+            
             fetch("/stations").then(response => {
                 return response.json();
                }).then(data => {
@@ -26,6 +39,7 @@
                       });
 
 
+                
                     data.forEach(station => {
                         
                         const marker = new google.maps.Marker({
@@ -34,24 +48,32 @@
                         
                         });
                         
-                        marker.addListener("click", () => {
-                            const infowindow = new google.maps.InfoWindow({
-                                content: station.name  ,
-                            });
-                            infowindow.open(map, marker);
+                        availability_data.forEach(number => {
+                            if (station.number == number.number){
+                                     marker.addListener("click", () => {
+                                        const infowindow = new google.maps.InfoWindow({
+                                            content: '<h1>' + station.name 
+                                            + '</h1><b>number of bike stands:' +  number.bike_stands + '<br>' 
+                                            + '</b><b>number of available bikes:' +  number.available_bikes + '</b>'
+                                        });
+                                        infowindow.open(map, marker);
+                        });      
+                        
+                        }});
+                                
+                            
                         });
-
-
-                    });
+                        
                 
-
-
-
-                    
 
         }).catch(err => {
         console.log("error:",err);
         })
+            
+             
+         }).catch(err => {      
+             console.log("error:",err);         
+         })
             
         }
     </script>
