@@ -25,7 +25,7 @@ def list():
 @app.route("/stations")
 def stations():
     engine = create_engine("mysql+mysqlconnector://{}:{}@{}:{}/{}".format(dbinfo.USER, dbinfo.PASSWORD, dbinfo.URI, dbinfo.PORT, dbinfo.DB), echo=True)
-    df = pd.read_sql_table("stations", engine)
+    df = pd.read_sql("SELECT * FROM stations", engine)
     return df.to_json(orient='records')#render_template("test.html", results = 'piss')
 
 #Returns JSON of most recent weather data
