@@ -7,12 +7,12 @@ import dbinfo
 app = Flask(__name__)
 
 #Basic test template
-@app.route("/")
+@app.route("/test")
 def index():
     return render_template("test.html", name = 'test')
 
 #for accessing map.html
-@app.route("/map")
+@app.route("/")
 def map():
     return render_template("map.html")
 

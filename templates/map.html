@@ -5,76 +5,74 @@
       <meta charset = "utf-8">
       <title>Simple Map</title>
       <link href="{{url_for('static',filename='style.css')}}" rel="stylesheet" type="text/css" />
+      <script src="static/get_weather.js"></script>
   </head>
 
     
   <body>
     <div id="map"></div>
 
+    <div id ="weather"></div>
     <script>
 
         let map;
 
         function initMap() {
 
-        fetch("/availability").then(response =>{
-             return response.json();  
+            fetch("/availability").then(response =>{
+                return response.json();  
             
-        }).then(availability_data => {
-             console.log("availability data:", availability_data);
+            }).then(availability_data => {
+                console.log("availability data:", availability_data);
 
 
                 fetch("/stations").then(response => {
-                     return response.json();
+                    return response.json();
                 }).then(data => {
-                     console.log("data:", data);
+                    console.log("data:", data);
 
-                            map = new google.maps.Map(document.getElementById("map"), {
-                                center: { lat: 53.349804, lng: -6.260310 },
-                                zoom: 14,
-                              });
+                    map = new google.maps.Map(document.getElementById("map"), {
+                        center: { lat: 53.349804, lng: -6.260310 },
+                        zoom: 14,
+                    });
 
 
-                            data.forEach(station => {
+                    data.forEach(station => {
 
-                                const marker = new google.maps.Marker({
-                                position: {lat: station.latitude, lng: station.longitude},
-                                map: map, 
+                        const marker = new google.maps.Marker({
+                        position: {lat: station.latitude, lng: station.longitude},
+                        map: map, 
 
-                                });
+                        });
 
-                                        availability_data.forEach(number => {
-                                            if (station.number == number.number){
-                                                     marker.addListener("click", () => {
-                                                        const infowindow = new google.maps.InfoWindow({
-                                                            content: '<h1>' + station.name 
-                                                            + '</h1><b>number of bike stands:' +  number.bike_stands + '<br>' 
-                                                            + '</b><b>number of available bikes:' +  number.available_bikes + '</b>'
-                                                        });
-                                                        infowindow.open(map, marker);
-                                                    });      
-
-                                            }});
-
+                        availability_data.forEach(number => {
+                            if (station.number == number.number){
+                                marker.addListener("click", () => {
+                                    const infowindow = new google.maps.InfoWindow({
+                                    content: '<h1>' + station.name 
+                                    + '</h1><b>number of bike stands:' +  number.bike_stands + '<br>' 
+                                    + '</b><b>number of available bikes:' +  number.available_bikes + '</b>'
                                     });
-
-
-                        }).catch(err => {
-                            console.log("error:",err);
-                        })
+                                    infowindow.open(map, marker);
+                                });
+							}
+                        });
+                    });
+        
+                }).catch(err => {
+                    console.log("error:",err);
+                })
             
              
-        }).catch(err => {      
-             console.log("error:",err);         
-        })          
+            }).catch(err => {      
+                console.log("error:",err);         
+            })
         }
+        
+        get_current_weather("weather");
         
     </script>
 
-<script
-src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDujnb0gjjChAqDLvOpyInSVyYR7xKYIKQ&callback=initMap&libraries=&v=weekly"
-async
-        
-></script>
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDujnb0gjjChAqDLvOpyInSVyYR7xKYIKQ&callback=initMap&libraries=&v=weekly" async ></script>
 </body>
 </html>
