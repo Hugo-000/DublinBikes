@@ -5,15 +5,16 @@
       <meta charset = "utf-8">
       <title>Simple Map</title>
       <link href="{{url_for('static',filename='style.css')}}" rel="stylesheet" type="text/css" />
+      <script src= "static/scripts.js"></script>
+      <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   </head>
 
     
   <body>
     <div id="map"></div>
-
     <div id ="weather"></div>
+    <div id ="Charts"></div>
 
-    <script src= "static/scripts.js"></script>
-	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDujnb0gjjChAqDLvOpyInSVyYR7xKYIKQ&callback=initMap&libraries=&v=weekly" async ></script>
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDujnb0gjjChAqDLvOpyInSVyYR7xKYIKQ&callback=initCharts&libraries=&v=weekly" async ></script>
 </body>
 </html>
