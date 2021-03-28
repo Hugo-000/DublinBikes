@@ -30,7 +30,7 @@ function initMap() {
 
                         marker.addListener("click", () => {
                             displayInfo(map, marker, station, data)
-                            makeGraphs(station.number)
+                            makeGraphs(station)
                         });
                     }
                 })
@@ -64,24 +64,22 @@ function displayInfo(map, marker, station, data) {
 
 //Creates Graph when given the Station
 function makeGraphs(station){
-    fetch("/get_availability/"+station).then(response => {
+    fetch("/get_availability/"+station.number).then(response => {
         return response.json();
     }).then(data => {
-        console.log(data);
 
-    var options = {
-            title: "Bike availability",
-    }
-    var chart = new google.visualization.ColumnChart(document.getElementById('Charts'));
-    var chart_data = new google.visualization.DataTable();
-    chart_data.addColumn("datetime", "Date");
-    chart_data.addColumn("number", "Bike Availability");
-    data.forEach(x=>{
-        chart_data.addRow([new Date(x.last_update),x.available_bikes]);
+        var options = {
+            title: station.name + ": Bike availability",
+        }
+        var chart = new google.visualization.ColumnChart(document.getElementById('Charts'));
+        var chart_data = new google.visualization.DataTable();
+        chart_data.addColumn("datetime", "Date");
+        chart_data.addColumn("number", "Bike Availability");
+        data.forEach(x=>{
+            	chart_data.addRow([new Date(x.last_update),x.available_bikes]);
         })
         chart.draw(chart_data, options);
     });
-    console.log('ha');
 }
 
 //Fetches and Returns current Weather
