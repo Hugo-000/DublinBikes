@@ -1,7 +1,18 @@
 
 #map {
-  height: 450px;
+  height: 70%;
   width: 70%;
+  display: inline-block;
+}
+
+#weather{
+   width: 30%;
+  display: inline-block;
+  float:right;
+}
+
+#charts{
+    height: 30%;
 }
 
 html,
