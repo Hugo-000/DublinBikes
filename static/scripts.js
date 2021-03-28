@@ -3,8 +3,6 @@ DUBLIN_LNG = -6.260310;
 
 let map;
 
-get_current_weather("weather");
-
 //Makes Map
 function initMap() {
     fetch("/get_availability").then(response =>{   
@@ -47,6 +45,9 @@ function initMap() {
 
 //Creates and Displays Info Window
 function displayInfo(map, marker, station, data) {
+    if (infowindow) {
+        infowindow.close;
+    }
     const infowindow = new google.maps.InfoWindow({
         content: '<h1>Station ' + station.number + '</h1><h2>' + station.address +'</h2>'
             + '<ul><li>' + data.status + '</li>'
@@ -66,6 +67,7 @@ function makeGraphs(station){
     console.log('ha');
 }
 
+//Fetches and Returns current Weather
 function get_current_weather(id) {
     fetch("/get_weather").then(response => response.json())
         .then(function(data) {
@@ -84,3 +86,5 @@ function get_current_weather(id) {
         console.log("Unable to collect/format current weather data");
     })
 }
+
+get_current_weather("weather");
