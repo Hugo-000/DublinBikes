@@ -27,9 +27,10 @@ function initMap() {
                 
                 availability_data.forEach(data => {
                     if (station.number == data.number) {
+
                         marker.addListener("click", () => {
                             displayInfo(map, marker, station, data)
-                            makeGraphs(station)
+                            makeGraphs(station.number)
                         });
                     }
                 })
@@ -45,9 +46,7 @@ function initMap() {
 
 //Creates and Displays Info Window
 function displayInfo(map, marker, station, data) {
-    if (infowindow) {
-        infowindow.close;
-    }
+
     const infowindow = new google.maps.InfoWindow({
         content: '<h1>Station ' + station.number + '</h1><h2>' + station.address +'</h2>'
             + '<ul><li>' + data.status + '</li>'
@@ -60,10 +59,28 @@ function displayInfo(map, marker, station, data) {
             + '<li>Free Stands: ' + data.available_bike_stands +'/' + data.bike_stands + '</li>'
         });
         infowindow.open(map, marker);
+
 }
 
-//Creates Graph when given the Station NOT STARTED
+//Creates Graph when given the Station
 function makeGraphs(station){
+    fetch("/get_availability/"+station).then(response => {
+        return response.json();
+    }).then(data => {
+        console.log(data);
+
+    var options = {
+            title: "Bike availability",
+    }
+    var chart = new google.visualization.ColumnChart(document.getElementById('Charts'));
+    var chart_data = new google.visualization.DataTable();
+    chart_data.addColumn("datetime", "Date");
+    chart_data.addColumn("number", "Bike Availability");
+    data.forEach(x=>{
+        chart_data.addRow([new Date(x.last_update),x.available_bikes]);
+        })
+        chart.draw(chart_data, options);
+    });
     console.log('ha');
 }
 
@@ -88,3 +105,11 @@ function get_current_weather(id) {
 }
 
 get_current_weather("weather");
+
+
+function initCharts(){
+    google.charts.load('current',{'packages':['corechart']});
+    google.charts.setOnLoadCallback(initMap);
+    }
+
+
