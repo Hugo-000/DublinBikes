@@ -5,7 +5,6 @@ import pandas as pd
 import dbinfo
 import datetime as dt
 import pytz
-from functools import lru_cache
 
 app = Flask(__name__)
 
@@ -16,7 +15,6 @@ def map():
 
 #Returns JSON data of stations table
 @app.route("/get_stations")
-@lru_cache
 def stations():
     engine = create_engine("mysql+mysqlconnector://{}:{}@{}:{}/{}".format(dbinfo.USER, dbinfo.PASSWORD, dbinfo.URI, dbinfo.PORT, dbinfo.DB), echo=True)
     df = pd.read_sql("SELECT * FROM stations", engine)
@@ -24,7 +22,6 @@ def stations():
 
 #Returns JSON of most recent weather data
 @app.route("/get_weather")
-@lru_cache
 def weather():
     engine = create_engine("mysql+mysqlconnector://{}:{}@{}:{}/{}".format(dbinfo.USER, dbinfo.PASSWORD, dbinfo.URI, dbinfo.PORT, dbinfo.DB), echo=True)
     df = pd.read_sql(
@@ -34,7 +31,6 @@ def weather():
 
 # Returns JSON data of most recent  availability data
 @app.route("/get_availability")
-@lru_cache
 def availability():
     engine = create_engine("mysql+mysqlconnector://{}:{}@{}:{}/{}".format(dbinfo.USER, dbinfo.PASSWORD, dbinfo.URI, dbinfo.PORT, dbinfo.DB), echo=True)
     df = pd.read_sql("SELECT * FROM availability WHERE (number, last_update) in (select number, max(last_update) from dbbikes.availability group by number);", 
@@ -43,7 +39,6 @@ def availability():
 
 #Gives One Week worth of data on a specific station
 @app.route("/get_availability/<int:station_id>")
-@lru_cache
 def week_availability(station_id):
     engine = create_engine("mysql+mysqlconnector://{}:{}@{}:{}/{}".format(dbinfo.USER, dbinfo.PASSWORD, dbinfo.URI, dbinfo.PORT, dbinfo.DB), echo=True)
     now = dt.datetime.now(tz=pytz.timezone('Europe/Dublin'))
