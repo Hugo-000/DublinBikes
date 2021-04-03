@@ -16,7 +16,7 @@ def main():
     while True:
         try:
             now = dt.datetime.now(tz=pytz.timezone('Europe/Dublin')).time()
-            if now >= dt.time(4,30) or now <= dt.time(0,30):#Don't scrape when closed
+            if now >= dt.time(4,30) or now <= dt.time(1,0):#Don't scrape when closed Half an hour grace
                 #get data
                 response = requests.get(APIinfo.BIKE_URI, params={"apiKey": APIinfo.BIKE_APIKEY, "contract": APIinfo.BIKE_CONTRACT})
                 #store data
