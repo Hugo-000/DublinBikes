@@ -18,6 +18,7 @@ function initMap() {
                 zoom: 14,
             });
             
+            var infoWindow = new google.maps.InfoWindow();
             
             stations.forEach(station => {
                 const marker = new google.maps.Marker({
@@ -28,7 +29,7 @@ function initMap() {
                 availability_data.forEach(data => {
                     if (station.number == data.number) {
                         marker.addListener("click", () => {
-                            displayInfo(map, marker, station, data)
+                            displayInfo(map, marker, station, data, infoWindow)
                             makeGraphs(station)
                         });
                     }
@@ -44,19 +45,18 @@ function initMap() {
 }
 
 //Creates and Displays Info Window
-function displayInfo(map, marker, station, data) {
-    const infowindow = new google.maps.InfoWindow({
-        content: '<h1>Station ' + station.number + '</h1><h2>' + station.address +'</h2>'
-            + '<ul><li>' + data.status + '</li>'
-            + '<li>' + station.banking +  '</li>'
-            + '<li>Bikes: ' +  data.available_bikes +'/' + data.bike_stands + '<ul>'
-            + '<li>Mechanical: ' + data.mechanical_bikes
-            + '<li>Electrical: ' + data.electrical_bikes + '<ul>'
-            + '<li>Internal_Battery: ' + data.electrical_internal_battery_bikes + '</li>'
-            + '<li>Removable_Battery: ' + data.electrical_removable_battery_bikes + '</li></ul></li></ul></li>'
-            + '<li>Free Stands: ' + data.available_bike_stands +'/' + data.bike_stands + '</li>'
-        });
-        infowindow.open(map, marker);
+function displayInfo(map, marker, station, data, infoWindow) {
+    pay_terminal = station.banking ? "Yes" : "No";
+    infoWindow.setContent('<h1>Station ' + station.number + '</h1><h2>' + station.address +'</h2>'
+        + '<ul><li>' + data.status + '</li>'
+        + '<li>Payment Terminal: ' + pay_terminal +  '</li>'
+        + '<li>Bikes: ' +  data.available_bikes +'/' + data.bike_stands + '<ul>'
+        + '<li>Mechanical: ' + data.mechanical_bikes
+        + '<li>Electrical: ' + data.electrical_bikes + '<ul>'
+        + '<li>Internal_Battery: ' + data.electrical_internal_battery_bikes + '</li>'
+        + '<li>Removable_Battery: ' + data.electrical_removable_battery_bikes + '</li></ul></li></ul></li>'
+        + '<li>Free Stands: ' + data.available_bike_stands +'/' + data.bike_stands + '</li>')
+    infoWindow.open(map, marker);
 }
 
 //Creates Graph when given the Station NOT STARTED
