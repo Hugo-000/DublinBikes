@@ -17,29 +17,35 @@ def main():
         try:
             response = requests.get(url)
         
-            store_weather(json.loads(response.text))
+            refresh_predictions(json.loads(response.text))
         
-            time.sleep(30*60)
+            time.sleep(24*60*60)
         except:
             print(traceback.format_exc())
 
-#Parses weather obtained from API request
-def parseWeather(obj):
+#Parses weather prediction obtained from API request
+def parsePrediction(obj):
     return {'time' : datetime.fromtimestamp(int(obj['dt'])),
-            'temp' : obj['temp'],
+            'sunrise': datetime.fromtimestamp(int(obj['sunrise'])),
+            'sunset': datetime.fromtimestamp(int(obj['sunset'])),
+            'temp_day' : obj['temp']['day'],
+            'temp_night': obj['temp']['night'],
+            'temp_eve' : obj['temp']['eve'],
+            'temp_morn': obj['temp']['morn'],
             'humidity' : obj['humidity'],
             'wind_speed' : obj['wind_speed'],
             'main' : obj['weather'][0]['main'],
             'description' : obj['weather'][0]['description'],
-            'visibility' : obj['visibility'],
-            'icon' : obj['weather'][0]['icon']
+            'icon': obj['weather'][0]['icon'],
         }
 
-#stores data in weather database
-def store_weather(json_data):
+#updates weather_predictions
+def refresh_predictions(json_data):
     metadata = sqla.MetaData(bind=engine)
-    weather = sqla.Table('weather', metadata, autoload=True)
+    daily_predictions = sqla.Table('daily_predictions', metadata, autoload=True)
 
-    engine.execute(weather.insert(), parseWeather(json_data['current']))
+    engine.execute("delete from daily_predictions")
+    for prediction in json_data['daily']:
+        engine.execute(daily_predictions.insert(), parsePrediction(prediction))
 
 main()
