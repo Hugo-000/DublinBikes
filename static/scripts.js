@@ -21,24 +21,24 @@ function initMap() {
             var infoWindow = new google.maps.InfoWindow();
             
             stations.forEach(station => {
-                const marker = new google.maps.Marker({
-                    position: {lat: station.latitude, lng: station.longitude},
-                    map: map,
-                });
-
                 availability_data.forEach(data => {
 
-
-
                     if (station.number == data.number) {
+                        const marker = new google.maps.Marker({
+                            position: {lat: station.latitude, lng: station.longitude},
+                            map: map,
+                            title:station.name,
+                            label: String(data.available_bikes),
+                            optimized: false,
+                        });
+                        
 
                         marker.addListener("click", () => {
                             displayInfo(map, marker, station, data, infoWindow)
                             makeGraphs(station)
                         });
                     }
-                })
-                
+                }) 
             });
         }).catch(err => {
             console.log("error:",err);
@@ -52,21 +52,6 @@ function initMap() {
 }
 
 //Creates and Displays Info Window
-<<<<<<< HEAD
-function displayInfo(map, marker, station, data) {
-    const infowindow = new google.maps.InfoWindow({
-        content: '<h1>Station ' + station.number + '</h1><h2>' + station.address +'</h2>'
-            + '<ul><li>' + data.status + '</li>'
-            + '<li>' + station.banking +  '</li>'
-            + '<li>Bikes: ' +  data.available_bikes +'/' + data.bike_stands + '<ul>'
-            + '<li>Mechanical: ' + data.mechanical_bikes
-            + '<li>Electrical: ' + data.electrical_bikes + '<ul>'
-            + '<li>Internal_Battery: ' + data.electrical_internal_battery_bikes + '</li>'
-            + '<li>Removable_Battery: ' + data.electrical_removable_battery_bikes + '</li></ul></li></ul></li>'
-            + '<li>Free Stands: ' + data.available_bike_stands +'/' + data.bike_stands + '</li>'
-        });
-        infowindow.open(map, marker);
-=======
 function displayInfo(map, marker, station, data, infoWindow) {
     pay_terminal = station.banking ? "Yes" : "No";
     infoWindow.setContent('<h1>Station ' + station.number + '</h1><h2>' + station.address +'</h2>'
@@ -79,7 +64,6 @@ function displayInfo(map, marker, station, data, infoWindow) {
         + '<li>Removable_Battery: ' + data.electrical_removable_battery_bikes + '</li></ul></li></ul></li>'
         + '<li>Free Stands: ' + data.available_bike_stands +'/' + data.bike_stands + '</li>')
     infoWindow.open(map, marker);
->>>>>>> refs/heads/InfoWindow
 
 }
 
@@ -101,8 +85,8 @@ function makeGraphs(station){
         var chart = new google.visualization.LineChart(document.getElementById('Week_Charts'));
         var chart_data = new google.visualization.DataTable();
         chart_data.addColumn("datetime", "Date");
-        chart_data.addColumn("number", "Bike Availability");
-        chart_data.addColumn("number", "Bike Spaces");
+        chart_data.addColumn("number", "Bikes");
+        chart_data.addColumn("number", "Free Spaces");
         data.forEach(x=>{
                     chart_data.addRow([new Date(x.last_update),x.available_bikes,x.available_bike_stands]);
         })

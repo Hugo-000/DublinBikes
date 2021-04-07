@@ -9,6 +9,9 @@ from functools import lru_cache
 
 app = Flask(__name__)
 
+@app.route("/prototype")
+def prototype():
+    return render_template("map_prototype.html")
 #for accessing map.html
 @app.route("/")
 def map():
