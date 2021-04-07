@@ -17,14 +17,9 @@ function initMap() {
                 center: { lat: DUBLIN_LAT, lng: DUBLIN_LNG },
                 zoom: 14,
             });
-<<<<<<< Upstream, based on Primary
-
-
-=======
             
             var infoWindow = new google.maps.InfoWindow();
             
->>>>>>> 8db76dc Made it so only one infoWindow is displayed
             stations.forEach(station => {
                 const marker = new google.maps.Marker({
                     position: {lat: station.latitude, lng: station.longitude},
@@ -57,29 +52,6 @@ function initMap() {
 }
 
 //Creates and Displays Info Window
-<<<<<<< Upstream, based on Primary
-function displayInfo(map, marker, station, data) {
-<<<<<<< Upstream, based on Primary
-<<<<<<< Upstream, based on Primary
-=======
-
->>>>>>> 8a41d7e function implemented to display availability charts when marker clicked
-=======
->>>>>>> 24a2a97 Fixed Infowindow Problem
-    const infowindow = new google.maps.InfoWindow({
-        content: '<h1>Station ' + station.number + '</h1><h2>' + station.address +'</h2>'
-            + '<ul><li>' + data.status + '</li>'
-            + '<li>' + station.banking +  '</li>'
-            + '<li>Bikes: ' +  data.available_bikes +'/' + data.bike_stands + '<ul>'
-            + '<li>Mechanical: ' + data.mechanical_bikes
-            + '<li>Electrical: ' + data.electrical_bikes + '<ul>'
-            + '<li>Internal_Battery: ' + data.electrical_internal_battery_bikes + '</li>'
-            + '<li>Removable_Battery: ' + data.electrical_removable_battery_bikes + '</li></ul></li></ul></li>'
-            + '<li>Free Stands: ' + data.available_bike_stands +'/' + data.bike_stands + '</li>'
-        });
-        infowindow.open(map, marker);
-
-=======
 function displayInfo(map, marker, station, data, infoWindow) {
     pay_terminal = station.banking ? "Yes" : "No";
     infoWindow.setContent('<h1>Station ' + station.number + '</h1><h2>' + station.address +'</h2>'
@@ -92,7 +64,7 @@ function displayInfo(map, marker, station, data, infoWindow) {
         + '<li>Removable_Battery: ' + data.electrical_removable_battery_bikes + '</li></ul></li></ul></li>'
         + '<li>Free Stands: ' + data.available_bike_stands +'/' + data.bike_stands + '</li>')
     infoWindow.open(map, marker);
->>>>>>> 8db76dc Made it so only one infoWindow is displayed
+
 }
 
 //Creates Graph when given the Station
