@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta charset = "utf-8">
+      <title>Map Prototype</title>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+      <link href="{{url_for('static',filename='style.css')}}" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div id="nav">
+        <input onclick="hideMarkers();" type="button" value="bank=1" />
+        <input onclick="showMarkers();" type="button" value="bank=0/1" />
+        <b>Start: </b><select id="start"></select>
+        <b>End: </b><select id="end"></select>
+    </div>
+    <div id="map"></div>
+    <script>
+        let map;
+        //markers0 is the stations that banking=0
+        let markers0 = [];
+        let markers1 = [];
+        function initMap() {
+            map = new google.maps.Map(document.getElementById("map"), {
+                        center: { lat: 53.349804, lng: -6.260310 },
+                        zoom: 14,
+            });
+            //Create an info window to share between markers
+            const stationWindow= new google.maps.InfoWindow();
+
+            //The function to display the Markers with corresponding information
+            fetch("/get_availability").then(response =>{
+                return response.json();
+            }).then(availability_data => {
+                fetch("/get_stations").then(response => {
+                     return response.json();
+                }).then(stations => {
+                     var station_option="<option value=''> </option>";
+                     stations.forEach(station => {
+                        availability_data.forEach(availability => {
+                            if (station.number == availability.number){
+                                station_option+="<option value='"+station.latitude+","+station.longitude+"'>"+station.name+"</option>";
+                                if (station.banking == "1"){
+                                    const marker = new google.maps.Marker({
+                                        position: {lat: station.latitude, lng: station.longitude},
+                                        map: map,
+                                        title:station.name,
+                                        label:`${availability.available_bikes}`,
+                                        optimized: false,
+                                    });
+                                    marker.addListener("click", () => {
+                                        stationWindow.close();
+                                        var station_info='<h1>Station ' + station.number + '</h1><h2>' + station.address +'</h2>'
+                                                    + '<ul><li>Status' + availability.status + '</li>'
+                                                    + '<li>Banking' + station.banking +  '</li>'
+                                                    + '<li>Bikes: ' +  availability.available_bikes +'/' + availability.bike_stands + '<ul>'
+                                                    + '<li>Mechanical: ' + availability.mechanical_bikes
+                                                    + '<li>Electrical: ' + availability.electrical_bikes + '<ul>'
+                                                    + '<li>Internal_Battery: ' + availability.electrical_internal_battery_bikes + '</li>'
+                                                    + '<li>Removable_Battery: ' + availability.electrical_removable_battery_bikes + '</li></ul></li></ul></li>'
+                                                    + '<li>Stands: ' + availability.available_bike_stands +'/' + availability.bike_stands + '</li>';
+                                        stationWindow.setContent(station_info);
+                                        stationWindow.open(marker.getMap(), marker);
+                                    });
+                                    markers1.push(marker);
+                                } else {
+                                    const marker = new google.maps.Marker({
+                                        position: {lat: station.latitude, lng: station.longitude},
+                                        map: map,
+                                        title:station.name,
+                                        label:`${availability.available_bikes}`,
+                                        optimized: false,
+                                    });
+                                    marker.addListener("click", () => {
+                                        stationWindow.close();
+                                        var station_info='<h1>Station ' + station.number + '</h1><h2>' + station.address +'</h2>'
+                                                    + '<ul><li>Status' + availability.status + '</li>'
+                                                    + '<li>Banking' + station.banking +  '</li>'
+                                                    + '<li>Bikes: ' +  availability.available_bikes +'/' + availability.bike_stands + '<ul>'
+                                                    + '<li>Mechanical: ' + availability.mechanical_bikes
+                                                    + '<li>Electrical: ' + availability.electrical_bikes + '<ul>'
+                                                    + '<li>Internal_Battery: ' + availability.electrical_internal_battery_bikes + '</li>'
+                                                    + '<li>Removable_Battery: ' + availability.electrical_removable_battery_bikes + '</li></ul></li></ul></li>'
+                                                    + '<li>Stands: ' + availability.available_bike_stands +'/' + availability.bike_stands + '</li>';
+                                        stationWindow.setContent(station_info);
+                                        stationWindow.open(marker.getMap(), marker);
+                                    });
+                                    markers0.push(marker);
+                                }
+                                document.getElementById("start").innerHTML=station_option;
+                                document.getElementById("end").innerHTML=station_option;
+                            }
+                        });
+                     });
+                }).catch(err => {
+                     console.log("error:",err);
+                })
+            }).catch(err => {
+                console.log("error:",err);
+            })
+
+            //Get location with google map geolocation api
+            infoWindow = new google.maps.InfoWindow();
+            const locationButton = document.createElement("button");
+            locationButton.textContent = "Move to Current Location";
+            locationButton.classList.add("custom-map-control-button");
+            map.controls[google.maps.ControlPosition.TOP_CENTER].push(
+                locationButton
+            );
+            locationButton.addEventListener("click", () => {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                      (position) => {
+                        const pos = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                        };
+                        infoWindow.setPosition(pos);
+                        infoWindow.setContent("Location found.");
+                        infoWindow.open(map);
+                        map.setCenter(pos);
+                    },
+                    () => {
+                        handleLocationError(true, infoWindow, map.getCenter());
+                    });
+                } else {
+                    // Browser doesn't support Geolocation
+                    handleLocationError(false, infoWindow, map.getCenter());
+                }
+            });
+
+            //Calculate And Display Route with google direction API
+            const directionsService = new google.maps.DirectionsService();
+            const directionsRenderer = new google.maps.DirectionsRenderer();
+            directionsRenderer.setMap(map);
+            const onChangeHandler = function () {
+                calculateAndDisplayRoute(directionsService, directionsRenderer);
+            };
+            document.getElementById("start").addEventListener("change", onChangeHandler);
+            document.getElementById("end").addEventListener("change", onChangeHandler);
+        }
+
+        //Calculate And Display Route with google direction API
+        function calculateAndDisplayRoute(directionsService, directionsRenderer) {
+            directionsService.route({
+                origin: {query: document.getElementById("start").value,},
+                destination: {query: document.getElementById("end").value,},
+                travelMode: google.maps.TravelMode.BICYCLING,
+            },
+            (response, status) => {
+                if (status === "OK") {
+                    directionsRenderer.setDirections(response);
+                } else {
+                    window.alert("Directions request failed due to " + status);
+                }
+            }
+            );
+        }
+
+        //Handle Location Error
+        function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+            infoWindow.setPosition(pos);
+            infoWindow.setContent(
+                browserHasGeolocation
+                    ? "Error: The Geolocation service failed."
+                    : "Error: Your browser doesn't support geolocation."
+            );
+            infoWindow.open(map);
+        }
+
+        // Hide the markers0.
+        function hideMarkers() {
+           for (let i = 0; i < markers0.length; i++) {
+                  markers0[i].setMap(null);
+           }
+        }
+        // Shows any markers0
+        function showMarkers() {
+           for (let i = 0; i < markers0.length; i++) {
+                  markers0[i].setMap(map);
+           }
+        }
+    </script>
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAubX7dljs_6l5yelGgSdoKArHWgYTwSdk&callback=initMap&libraries=&v=weekly"
+        async
+    ></script>
+  </body>
+</html>
