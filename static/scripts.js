@@ -17,15 +17,18 @@ function initMap() {
                 center: { lat: DUBLIN_LAT, lng: DUBLIN_LNG },
                 zoom: 14,
             });
-            
-            
+
+
             stations.forEach(station => {
                 const marker = new google.maps.Marker({
                     position: {lat: station.latitude, lng: station.longitude},
                     map: map,
                 });
-                
+
                 availability_data.forEach(data => {
+
+
+
                     if (station.number == data.number) {
 
                         marker.addListener("click", () => {
@@ -39,6 +42,9 @@ function initMap() {
         }).catch(err => {
             console.log("error:",err);
         });
+
+
+
     }).catch(err => {
         console.log("error:",err);
     })
@@ -68,18 +74,27 @@ function makeGraphs(station){
         return response.json();
     }).then(data => {
 
-        var options = {
-            title: station.name + ": Bike availability",
+        var weekly_options = {
+            title: station.name + ": Bike availability (Weekly)",
+            explorer: {
+                    actions: ['dragToZoom', 'rightClickToReset'],
+                    axis: 'horizontal',
+                    keepInBounds: true,
+                    maxZoomIn: 4.0
+            }
         }
-        var chart = new google.visualization.ColumnChart(document.getElementById('Charts'));
+        var chart = new google.visualization.LineChart(document.getElementById('Week_Charts'));
         var chart_data = new google.visualization.DataTable();
         chart_data.addColumn("datetime", "Date");
         chart_data.addColumn("number", "Bike Availability");
+        chart_data.addColumn("number", "Bike Spaces");
         data.forEach(x=>{
-            	chart_data.addRow([new Date(x.last_update),x.available_bikes]);
+                    chart_data.addRow([new Date(x.last_update),x.available_bikes,x.available_bike_stands]);
         })
-        chart.draw(chart_data, options);
+        chart.draw(chart_data, weekly_options);
     });
+
+
 }
 
 //Fetches and Returns current Weather
@@ -108,6 +123,7 @@ get_current_weather("weather");
 function initCharts(){
     google.charts.load('current',{'packages':['corechart']});
     google.charts.setOnLoadCallback(initMap);
+    google.charts.load('current', {'packages':['bar']});
     }
 
 
