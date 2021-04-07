@@ -47,8 +47,11 @@ def availability():
 def week_availability(station_id):
     engine = create_engine("mysql+mysqlconnector://{}:{}@{}:{}/{}".format(dbinfo.USER, dbinfo.PASSWORD, dbinfo.URI, dbinfo.PORT, dbinfo.DB), echo=True)
     now = dt.datetime.now(tz=pytz.timezone('Europe/Dublin'))
-    df = pd.read_sql("SELECT * FROM availability WHERE number = {} and last_update >= date_add('{}', interval -7 DAY) order by last_update desc;".format(station_id, now), engine)
-    return df.to_json(orient='records')
+    df = pd.read_sql("SELECT * FROM availability WHERE number = {} and last_update >= date_add('{}', interval -5 DAY) order by last_update desc;".format(station_id, now), engine)
+    resampled_df = df.set_index('last_update').resample('H').mean()
+    resampled_df['last_update'] = resampled_df.index
+    return resampled_df.to_json(orient='records')
+
 
 if __name__ == "__main__":
     app.run(debug=True)
