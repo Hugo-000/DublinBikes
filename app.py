@@ -5,7 +5,6 @@ import pandas as pd
 import dbinfo
 import datetime as dt
 import pytz
-from functools import lru_cache
 
 app = Flask(__name__)
 
@@ -34,6 +33,7 @@ def weather():
 
 # Returns JSON data of most recent  availability data
 @app.route("/get_availability")
+
 @lru_cache()
 def availability():
     engine = create_engine("mysql+mysqlconnector://{}:{}@{}:{}/{}".format(dbinfo.USER, dbinfo.PASSWORD, dbinfo.URI, dbinfo.PORT, dbinfo.DB), echo=True)
