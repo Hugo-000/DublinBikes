@@ -63,8 +63,11 @@ def prediction(station_id, time):
     time = dt.datetime.strptime(time, "%Y-%m-%dT%H:%M")
     df = pd.read_sql("SELECT * FROM daily_predictions WHERE date(time) = '{}'".format(time.date()), engine)
     weather = df.to_dict(orient='records')
+
+    with open('scale_station_{}.pkl'.format(station_id), 'rb') as handle:
+        scaled = pickle.load(handle)
     
-    input = [weather[0]['temp_day'], weather[0]['humidity'], weather[0]['wind_speed']]
+    input = [(weather[0]['temp_day'] - scaled['temp'][0])/scaled['temp'][1] , (weather[0]['humidity'] - scaled['humidity'][0])/scaled['humidity'][1], (weather[0]['wind_speed']- scaled['wind_speed'][0])/scaled['wind_speed'][1]]
     
     weather_type = [0] * 7
     if weather[0]['main'] == "Clear": weather_type[0] = 1
@@ -88,7 +91,7 @@ def prediction(station_id, time):
     
     
     
-    with open('Model_station2.pkl', 'rb') as handle:
+    with open('model_station_{}.pkl'.format(station_id), 'rb') as handle:
         model = pickle.load(handle)
     
     result = model.predict([input])
