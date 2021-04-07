@@ -52,10 +52,6 @@ function initMap() {
 
 //Creates and Displays Info Window
 function displayInfo(map, marker, station, data) {
-<<<<<<< Upstream, based on Primary
-=======
-
->>>>>>> 8a41d7e function implemented to display availability charts when marker clicked
     const infowindow = new google.maps.InfoWindow({
         content: '<h1>Station ' + station.number + '</h1><h2>' + station.address +'</h2>'
             + '<ul><li>' + data.status + '</li>'
