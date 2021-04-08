@@ -260,7 +260,7 @@ function show_available_spaces() {
            }
 }
  // Shows e-bikes availability on the marker
-        function show_available_e_bikes() {
+function show_available_e_bikes() {
            for (let i = 0; i < markers1.length; i++) {
                   markers1[i].setLabel(markers1_label_e_bikes[i]);
            }
@@ -269,17 +269,21 @@ function show_available_spaces() {
            }
 }
 
-// Hide the markers0.
-        function hideMarkers() {
-           for (let i = 0; i < markers0.length; i++) {
-                  markers0[i].setMap(null);
-           }
-}
-// Shows any markers0
-        function showMarkers() {
-           for (let i = 0; i < markers0.length; i++) {
+// Show/Hide the markers0.
+function showhideMarkers() {
+            if(document.getElementById("banking_switch").checked == true){
+                //Show markers0
+                for (let i = 0; i < markers0.length; i++) {
                   markers0[i].setMap(map);
-           }
+                }
+                document.getElementById("banking_switch").checked = false;
+            }else{
+                //Hide markers0
+                for (let i = 0; i < markers0.length; i++) {
+                  markers0[i].setMap(null);
+                }
+                document.getElementById("banking_switch").checked = true;
+            }
 }
 //Fetches and Returns current Weather
 function get_current_weather(id) {
