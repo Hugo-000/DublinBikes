@@ -12,23 +12,53 @@ DUBLIN_LNG = -6.260310;
         var markers1_label_bikes=[];
         var markers1_label_spaces=[];
         var markers1_label_e_bikes=[];
-        //station_list is the list to store all the station names
-        var station_list = [];
-        //position_list is the list to store all the station position
-        var position_list = [];
+        //station_list is used for the datalist
+        var station_list ='<input list="station_datalist" class="input"  id="search_datalist" ><datalist id="station_datalist">';
         //station_option is to store all the options for route planning
         var station_option="<option value=''> </option>";
-        var user_input = document.getElementsByClassName("input")[0];
-        var SelectedStation = document.getElementById("SelectedStation");
+const DUBLIN_BOUNDS = {
+            north: 53.4,
+            south: 53.33,
+            west: -6.3101,
+            east: -6.2305,
+        };
 //Makes Map
 function initMap() {
     map = new google.maps.Map(document.getElementById("map"), {
                 center: { lat: DUBLIN_LAT, lng: DUBLIN_LNG },
                 zoom: 14,
+	    	restriction: {
+                            latLngBounds: DUBLIN_BOUNDS,
+                            strictBounds: false,
+                        },
                 disableDefaultUI: true,
+		//The map style is learnt from Google map style sample-Night Mode
+                styles: [
+                            {elementType: "geometry", stylers: [{ color: "#242f3e" }]},
+                            {elementType: "labels.text.stroke",stylers: [{ color: "#242f3e" }]},
+                            {elementType: "labels.text.fill",stylers: [{ color: "#746855" }]},
+                            {featureType: "administrative.locality",elementType: "labels.text.fill",stylers: [{ color: "#d59563" }]},
+                            {featureType: "poi",elementType: "labels.text.fill",stylers: [{ color: "#d59563" }]},
+                            {featureType: "poi.park",elementType: "geometry",stylers: [{ color: "#263c3f" }]},
+                            {featureType: "poi.park",elementType: "labels.text.fill",stylers: [{ color: "#6b9a76" }]},
+                            {featureType: "road",elementType: "geometry",stylers: [{ color: "#38414e" }]},
+                            {featureType: "road",elementType: "geometry.stroke",stylers: [{ color: "#212a37" }]},
+                            {featureType: "road",elementType: "labels.text.fill",stylers: [{ color: "#9ca5b3" }]},
+                            {featureType: "road.highway",elementType: "geometry",stylers: [{ color: "#746855" }]},
+                            {featureType: "road.highway",elementType: "geometry.stroke",stylers: [{ color: "#1f2835" }]},
+                            {featureType: "road.highway",elementType: "labels.text.fill",stylers: [{ color: "#f3d19c" }]},
+                            {featureType: "transit",elementType: "geometry",stylers: [{ color: "#2f3948" }]},
+                            {featureType: "transit.station",elementType: "labels.text.fill",stylers: [{ color: "#d59563" }]},
+                            {featureType: "water",elementType: "geometry",stylers: [{ color: "#17263c" }]},
+                            {featureType: "water",elementType: "labels.text.fill",stylers: [{ color: "#515c6d" }]},
+                            {featureType: "water",elementType: "labels.text.stroke",stylers: [{ color: "#17263c" }]},
+                        ],	    
             });
     //Create an info window to share between markers
     const stationWindow= new google.maps.InfoWindow();
+    //Create a search window to display the search result
+    const geocoder = new google.maps.Geocoder();
+    const searchwindow = new google.maps.InfoWindow();
     //Match the Markers with corresponding information
     fetch("/get_availability").then(response =>{   
         return response.json();   
@@ -40,8 +70,7 @@ function initMap() {
                 availability_data.forEach(availability => {
                     if (station.number == availability.number) {
                         station_option+="<option value='"+station.latitude+","+station.longitude+"'>"+station.name+"</option>";
-                        station_list.push(station.name);
-                        position_list.push(station.latitude+","+station.longitude)
+                        station_list+='<option value="'+station.name+'" data-value="'+station.latitude+','+station.longitude+'">';
                         const marker = new google.maps.Marker({
                             position: {lat: station.latitude, lng: station.longitude},
                             map: map,
@@ -53,7 +82,7 @@ function initMap() {
                             stationWindow.close();
                             pay_terminal = station.banking ? "Yes" : "No";
                             var station_info='<h1>Station ' + station.number + '</h1><h2>' + station.address
-                                                    + '</h2><ul><li>Status' + availability.status
+                                                    + '</h2><ul><li>Status: ' + availability.status
                                                     + '</li><li>Banking' + pay_terminal
                                                     + '</li><li>Bikes: ' +  availability.available_bikes
                                                     + '<ul><li>Mechanical: ' + availability.mechanical_bikes
@@ -76,18 +105,20 @@ function initMap() {
                                 markers0_label_spaces.push(String(availability.available_bike_stands));
                                 markers0_label_e_bikes.push(String(availability.electrical_bikes));
                         }
-                        document.getElementById("start").innerHTML=station_option;
-                        document.getElementById("end").innerHTML=station_option;
                     }
                 }) 
             });
+	station_list+='</datalist>';
+        document.getElementById("search_bar_datalist").innerHTML=station_list;
+	document.getElementById("start").innerHTML=station_option;
+        document.getElementById("end").innerHTML=station_option;	
         }).catch(err => {
             console.log("error:",err);
         });
     }).catch(err => {
         console.log("error:",err);
     })
-    //Get location with google map geolocation api
+    //Get location with google map geolocation api, this function is learnt from Google map geolocation API sample
     locationWindow = new google.maps.InfoWindow();
     const locationButton = document.createElement("button");
     locationButton.textContent = "Move to Current Location";
@@ -115,6 +146,10 @@ function initMap() {
                handleLocationError(false, locationWindow, map.getCenter());
            }
       });
+      //Use google map geocoding API to find the search result, this function is learnt from Google map geocoding API sample
+      document.getElementById("submit").addEventListener("click", () => {
+                geocodeLatLng(geocoder, map, searchwindow);
+            });
       //Calculate And Display Route with google direction API
       const directionsService = new google.maps.DirectionsService();
       const directionsRenderer = new google.maps.DirectionsRenderer();
@@ -178,53 +213,33 @@ function calculateAndDisplayRoute(directionsService, directionsRenderer) {
             }
         );
 }
- //Display Result when the user click on search bar
- user_input.onfocus = function(){
-        var stationButtons = document.createElement("div");
-        stationButtons.id = "buttons";
-        SelectedStation.appendChild(stationButtons);
-	    showResult();
-}
-//Display Result when the user is inputting
- user_input.oninput = function() {
-        var buttons_before = document.getElementById("buttons");
-	    SelectedStation.removeChild(buttons_before);
-	    var stationButtons = document.createElement("div");
-        stationButtons.id = "buttons";
-        SelectedStation.appendChild(stationButtons);
-        showResult();
-}
-//Delete the result when the user click on somewhere else
-  user_input.onblur = function(){
-         var buttons_before = document.getElementById("buttons");
-         SelectedStation.removeChild(buttons_before);
-}
-//Create buttons that stands for the stations that the user is probably searching for
-function showResult(){
-         var result_index = searchForInput(user_input.value,station_list);
-         for(var i=0;i<result_index.length;i++){
-               var station_button = document.createElement("BUTTON");
-               var index=result_index[i];
-               var station_name = document.createTextNode(station_list[index]);
-               station_button.appendChild(station_name);
-               document.getElementById("buttons").appendChild(station_button);
-          }
-}
-//Search for the stations that the user is probably searching for
-function searchForInput(theInput, theList){
-        if(theInput == ""){
-    	      return [];
-        }else{
-              var search_input=theInput.toUpperCase();
-	          var result_list = [];
-	          for(var i=0;i<theList.length;i++){
-	                 var index=theList[i].indexOf(search_input);
-	                 if(index>=0){
-	                      result_list.push(index);
-	                 }
-	           }
-	           return result_list;
-         }
+//Display the station the user is searching for on the map with google geocoding API, this function is learnt from Google map geocoding API sample
+function geocodeLatLng(geocoder, map, searchwindow) {
+                var searchInput=document.getElementById("search_datalist").value;
+                if(!searchInput) return;
+                var position= document.querySelector("#station_datalist"+" option[value='"+searchInput+"']").dataset.value;
+                const latlngStr = position.split(",", 2);
+                const latlng = {
+                    lat: parseFloat(latlngStr[0]),
+                    lng: parseFloat(latlngStr[1]),
+                };
+                geocoder.geocode({ location: latlng }, (results, status) => {
+                    if (status === "OK") {
+                        if (results[0]) {
+                            map.setZoom(14);
+                            const marker = new google.maps.Marker({
+                                position: latlng,
+                                map: map,
+                                });
+                            searchwindow.setContent(results[0].formatted_address);
+                            searchwindow.open(map, marker);
+                        } else {
+                            window.alert("No results found");
+                        }
+                    } else {
+                        window.alert("Geocoder failed due to: " + status);
+                    }
+                });
 }
 // Shows bikes availability on the marker
 function show_available_bikes() {
