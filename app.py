@@ -64,7 +64,7 @@ def prediction(station_id, time):
     df = pd.read_sql("SELECT * FROM daily_predictions WHERE date(time) = '{}'".format(time.date()), engine)
     weather = df.to_dict(orient='records')
 
-    with open('scale_station_{}.pkl'.format(station_id), 'rb') as handle:
+    with open('Pickle_Files_Knn/scale_station_{}.pkl'.format(station_id), 'rb') as handle:
         scaled = pickle.load(handle)
     
     input = [(weather[0]['temp_day'] - scaled['temp'][0])/scaled['temp'][1] , (weather[0]['humidity'] - scaled['humidity'][0])/scaled['humidity'][1], (weather[0]['wind_speed']- scaled['wind_speed'][0])/scaled['wind_speed'][1]]
@@ -91,11 +91,12 @@ def prediction(station_id, time):
     
     
     
-    with open('model_station_{}.pkl'.format(station_id), 'rb') as handle:
+    with open('Pickle_Files_Knn/Model_station_{}.pkl'.format(station_id), 'rb') as handle:
         model = pickle.load(handle)
     
     result = model.predict([input])
+    result = int(result)
     
-    return jsonify(result[0]) # placeholder
+    return jsonify(result) # placeholder
 if __name__ == "__main__":
     app.run(debug=True)
