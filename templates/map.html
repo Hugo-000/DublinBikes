@@ -3,8 +3,8 @@
 
   <head>
       <meta charset = "utf-8">
-      <title>Map</title>
-      
+      <title>Dublin Bikes Map</title>
+      <link rel="icon" href="static/pictures/dublinbikes-vector-logo.png">
       <!-- Bootstrap -->
       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
       <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -22,7 +22,7 @@
       
     <div class = "row bg-dark">
         <div class = "col-sm-2">
-            <img src = "static/pictures/dublinbikes-vector-logo.png" class="img-fluid">
+            <img src = "static/pictures/dublinbikes-vector-logo-removebg-preview.png" class="img-fluid">
         </div>
         <div class="col-sm-2">
             <input id="submit" type="button" value="Search" />
@@ -37,13 +37,13 @@
         <div class="col-sm-2">
             <h5 class = "text-light">Marker Labels</h5>
             <div class="btn-group-vertical btn-group-toggle" data-toggle="buttons">
-                <label class="btn btn-primary active" onclick="change_labels('bikes');">
+                <label class="btn btn-info active" onclick="change_labels('bikes');">
                     <input type="radio" name="options" id="option1" autocomplete="off" checked> Free Bikes
                 </label>
-                <label class="btn btn-primary" onclick="change_labels('spaces');">
+                <label class="btn btn-info" onclick="change_labels('spaces');">
                     <input type="radio" name="options" id="option2" autocomplete="off"> Free Spaces
                 </label>
-                <label class="btn btn-primary" onclick="change_labels('e_bikes');">
+                <label class="btn btn-info" onclick="change_labels('e_bikes');">
                     <input type="radio" name="options" id="option2" autocomplete="off"> Free Electric Bikes
                 </label>
             </div>
@@ -58,22 +58,21 @@
     </div>
         
     <div class = "row bg-light">
-        <div class="col-sm-8">
+        <div class="col-sm-7">
             <div id="map" class = "map-responsive"></div>
         </div>
-        <div class = "col-sm-4">
-            <div id ="weather"></div>
-            <div id ="Week_Charts"></div>
+        <div class = "col-sm-2">
+            <div id ="weather" class="text-center"></div>
         </div>
     </div>
     
     
 
-    <!--<div class = "row bg-dark">
-        <div class="col-sm-8">
+    <div class = "row">
+        <div class="col-sm-12">
             <div id ="Week_Charts"></div>
         </div>
-    </div>-->
+    </div>
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAubX7dljs_6l5yelGgSdoKArHWgYTwSdk&callback=initCharts&libraries=&v=weekly" async ></script>
 </body>
 </html>
