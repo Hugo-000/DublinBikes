@@ -1,64 +1,68 @@
 DUBLIN_LAT = 53.349804;
 DUBLIN_LNG = -6.260310;
 
-        let map;
-        //markers0 is the stations that banking=0
-        let markers0 = [];
-        let markers1 = [];
-        //markers_label is the availability
-        var markers0_label_bikes=[];
-        var markers0_label_spaces=[];
-        var markers0_label_e_bikes=[];
-        var markers1_label_bikes=[];
-        var markers1_label_spaces=[];
-        var markers1_label_e_bikes=[];
-        //station_list is used for the datalist
-        var station_list ='<input list="station_datalist" class="input"  id="search_datalist" ><datalist id="station_datalist">';
-        //station_option is to store all the options for route planning
-        var station_option="<option value=''> </option>";
-	const DUBLIN_BOUNDS = {
+const DUBLIN_BOUNDS = {
             north: 53.4,
             south: 53.33,
             west: -6.3101,
             east: -6.2305,
-        };
+};
+
+let map;
+//markers0 is the stations that banking=0
+let markers0 = [];
+let markers1 = [];
+//markers_label is the availability
+var markers0_label_bikes=[];
+var markers0_label_spaces=[];
+var markers0_label_e_bikes=[];
+var markers1_label_bikes=[];
+var markers1_label_spaces=[];
+var markers1_label_e_bikes=[];
+//station_list is used for the datalist
+var station_list ='<input list="station_datalist" class="input"  id="search_datalist" ><datalist id="station_datalist">';
+//station_option is to store all the options for route planning
+var station_option="<option value=''> </option>";
+
 //Makes Map
 function initMap() {
     map = new google.maps.Map(document.getElementById("map"), {
-                center: { lat: DUBLIN_LAT, lng: DUBLIN_LNG },
-                zoom: 14,
-	    	restriction: {
-                            latLngBounds: DUBLIN_BOUNDS,
-                            strictBounds: false,
-                        },
-                disableDefaultUI: true,
+        center: { lat: DUBLIN_LAT, lng: DUBLIN_LNG },
+        zoom: 14,
+        restriction: {
+            latLngBounds: DUBLIN_BOUNDS,
+            strictBounds: false,
+        },
+        disableDefaultUI: true,
 		//The map style is learnt from Google map style Night Mode sample
-                styles: [
-                            {elementType: "geometry", stylers: [{ color: "#242f3e" }]},
-                            {elementType: "labels.text.stroke",stylers: [{ color: "#242f3e" }]},
-                            {elementType: "labels.text.fill",stylers: [{ color: "#746855" }]},
-                            {featureType: "administrative.locality",elementType: "labels.text.fill",stylers: [{ color: "#d59563" }]},
-                            {featureType: "poi",elementType: "labels.text.fill",stylers: [{ color: "#d59563" }]},
-                            {featureType: "poi.park",elementType: "geometry",stylers: [{ color: "#263c3f" }]},
-                            {featureType: "poi.park",elementType: "labels.text.fill",stylers: [{ color: "#6b9a76" }]},
-                            {featureType: "road",elementType: "geometry",stylers: [{ color: "#38414e" }]},
-                            {featureType: "road",elementType: "geometry.stroke",stylers: [{ color: "#212a37" }]},
-                            {featureType: "road",elementType: "labels.text.fill",stylers: [{ color: "#9ca5b3" }]},
-                            {featureType: "road.highway",elementType: "geometry",stylers: [{ color: "#746855" }]},
-                            {featureType: "road.highway",elementType: "geometry.stroke",stylers: [{ color: "#1f2835" }]},
-                            {featureType: "road.highway",elementType: "labels.text.fill",stylers: [{ color: "#f3d19c" }]},
-                            {featureType: "transit",elementType: "geometry",stylers: [{ color: "#2f3948" }]},
-                            {featureType: "transit.station",elementType: "labels.text.fill",stylers: [{ color: "#d59563" }]},
-                            {featureType: "water",elementType: "geometry",stylers: [{ color: "#17263c" }]},
-                            {featureType: "water",elementType: "labels.text.fill",stylers: [{ color: "#515c6d" }]},
-                            {featureType: "water",elementType: "labels.text.stroke",stylers: [{ color: "#17263c" }]},
-                        ],	    
-            });
+        styles: [
+            {elementType: "geometry", stylers: [{ color: "#242f3e" }]},
+            {elementType: "labels.text.stroke",stylers: [{ color: "#242f3e" }]},
+            {elementType: "labels.text.fill",stylers: [{ color: "#746855" }]},
+            {featureType: "administrative.locality",elementType: "labels.text.fill",stylers: [{ color: "#d59563" }]},
+            {featureType: "poi",elementType: "labels.text.fill",stylers: [{ color: "#d59563" }]},
+            {featureType: "poi.park",elementType: "geometry",stylers: [{ color: "#263c3f" }]},
+            {featureType: "poi.park",elementType: "labels.text.fill",stylers: [{ color: "#6b9a76" }]},
+            {featureType: "road",elementType: "geometry",stylers: [{ color: "#38414e" }]},
+            {featureType: "road",elementType: "geometry.stroke",stylers: [{ color: "#212a37" }]},
+            {featureType: "road",elementType: "labels.text.fill",stylers: [{ color: "#9ca5b3" }]},
+            {featureType: "road.highway",elementType: "geometry",stylers: [{ color: "#746855" }]},
+            {featureType: "road.highway",elementType: "geometry.stroke",stylers: [{ color: "#1f2835" }]},
+            {featureType: "road.highway",elementType: "labels.text.fill",stylers: [{ color: "#f3d19c" }]},
+            {featureType: "transit",elementType: "geometry",stylers: [{ color: "#2f3948" }]},
+            {featureType: "transit.station",elementType: "labels.text.fill",stylers: [{ color: "#d59563" }]},
+            {featureType: "water",elementType: "geometry",stylers: [{ color: "#17263c" }]},
+            {featureType: "water",elementType: "labels.text.fill",stylers: [{ color: "#515c6d" }]},
+            {featureType: "water",elementType: "labels.text.stroke",stylers: [{ color: "#17263c" }]},
+        ],	    
+    });
+    
     //Create an info window to share between markers
     const stationWindow= new google.maps.InfoWindow();
     //Create a search window to display the search result
     const geocoder = new google.maps.Geocoder();
     const searchwindow = new google.maps.InfoWindow();
+    
     //Match the Markers with corresponding information
     fetch("/get_availability").then(response =>{   
         return response.json();   
@@ -79,19 +83,7 @@ function initMap() {
                             optimized: false,
                         });
                         marker.addListener("click", () => {
-                            stationWindow.close();
-                            pay_terminal = station.banking ? "Yes" : "No";
-                            var station_info='<h1>Station ' + station.number + '</h1><h2>' + station.address
-                                                    + '</h2><ul><li>Status: ' + availability.status
-                                                    + '</li><li>Banking' + pay_terminal
-                                                    + '</li><li>Bikes: ' +  availability.available_bikes
-                                                    + '<ul><li>Mechanical: ' + availability.mechanical_bikes
-                                                    + '<li>Electrical: ' + availability.electrical_bikes
-                                                    + '<ul><li>Internal_Battery: ' + availability.electrical_internal_battery_bikes
-                                                    + '</li><li>Removable_Battery: ' + availability.electrical_removable_battery_bikes
-                                                    + '</li></ul></li></ul></li><li>Stands: ' + availability.available_bike_stands +'/' + availability.bike_stands + '</li>';
-                            stationWindow.setContent(station_info);
-                            stationWindow.open(marker.getMap(), marker);
+                            displayCurrentInfo(station, availability, marker, stationWindow);
                             makeGraphs(station);
                         });
                         if (station.banking == "1"){
@@ -108,9 +100,9 @@ function initMap() {
                     }
                 }) 
             });
-	station_list+='</datalist>';
-        document.getElementById("search_bar_datalist").innerHTML=station_list;
-	document.getElementById("start").innerHTML=station_option;
+            station_list+='</datalist>';
+            document.getElementById("search_bar_datalist").innerHTML=station_list;
+            document.getElementById("start").innerHTML=station_option;
         document.getElementById("end").innerHTML=station_option;	
         }).catch(err => {
             console.log("error:",err);
@@ -159,6 +151,22 @@ function initMap() {
       };
       document.getElementById("start").addEventListener("change", onChangeHandler);
       document.getElementById("end").addEventListener("change", onChangeHandler);
+}
+
+function displayCurrentInfo(station, availability, marker, stationWindow){
+    stationWindow.close()
+    pay_terminal = station.banking ? "Yes" : "No";
+    var station_info='<h1>Station ' + station.number + '</h1><h2>' + station.address
+        + '</h2><ul><li>Status: ' + availability.status
+        + '</li><li>Banking' + pay_terminal
+        + '</li><li>Bikes: ' +  availability.available_bikes
+        + '<ul><li>Mechanical: ' + availability.mechanical_bikes
+        + '<li>Electrical: ' + availability.electrical_bikes
+        + '<ul><li>Internal_Battery: ' + availability.electrical_internal_battery_bikes
+        + '</li><li>Removable_Battery: ' + availability.electrical_removable_battery_bikes
+        + '</li></ul></li></ul></li><li>Stands: ' + availability.available_bike_stands +'/' + availability.bike_stands + '</li>';
+    stationWindow.setContent(station_info);
+    stationWindow.open(marker.getMap(), marker);
 }
 
 
@@ -242,6 +250,31 @@ function geocodeLatLng(geocoder, map, searchwindow) {
                 });
 }
 // Shows bikes availability on the marker
+
+function change_labels(x){
+    switch(x) {
+        case "e_bikes":
+            labels1 = markers1_label_e_bikes
+            labels0 = markers0_label_e_bikes
+            break;
+        case "spaces":
+            labels1 = markers1_label_spaces
+            labels0 = markers0_label_spaces
+            break;
+        default:
+            labels1 = markers1_label_bikes
+            labels0 = markers0_label_bikes
+    }
+    for (let i = 0; i < markers1.length; i++) {
+        markers1[i].setLabel(labels1[i]);
+    }
+    for (let i = 0; i < markers0.length; i++) {
+        markers0[i].setLabel(labels0[i]);
+    }
+}
+
+
+
 function show_available_bikes() {
        for (let i = 0; i < markers1.length; i++) {
                   markers1[i].setLabel(markers1_label_bikes[i]);
@@ -252,7 +285,7 @@ function show_available_bikes() {
 }
 // Shows spaces availability on the marker
 function show_available_spaces() {
-           for (let i = 0; i < markers1.length; i++) {
+        for (let i = 0; i < markers1.length; i++) {
                   markers1[i].setLabel(markers1_label_spaces[i]);
            }
            for (let i = 0; i < markers0.length; i++) {
@@ -276,13 +309,13 @@ function showhideMarkers() {
                 for (let i = 0; i < markers0.length; i++) {
                   markers0[i].setMap(map);
                 }
-                document.getElementById("banking_switch").checked = false;
+                //document.getElementById("banking_switch").checked = false;
             }else{
                 //Hide markers0
                 for (let i = 0; i < markers0.length; i++) {
                   markers0[i].setMap(null);
                 }
-                document.getElementById("banking_switch").checked = true;
+                //document.getElementById("banking_switch").checked = true;
             }
 }
 //Fetches and Returns current Weather

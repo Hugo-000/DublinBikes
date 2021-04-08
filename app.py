@@ -12,6 +12,7 @@ app = Flask(__name__)
 @app.route("/prototype")
 def prototype():
     return render_template("map_prototype.html")
+
 #for accessing map.html
 @app.route("/")
 def map():
@@ -37,7 +38,6 @@ def weather():
 
 # Returns JSON data of most recent  availability data
 @app.route("/get_availability")
-
 @lru_cache()
 def availability():
     engine = create_engine("mysql+mysqlconnector://{}:{}@{}:{}/{}".format(dbinfo.USER, dbinfo.PASSWORD, dbinfo.URI, dbinfo.PORT, dbinfo.DB), echo=True)
