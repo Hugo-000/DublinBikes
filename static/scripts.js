@@ -18,8 +18,8 @@ DUBLIN_LNG = -6.260310;
         var station_option="<option value=''> </option>";
 	const DUBLIN_BOUNDS = {
             north: 53.4,
-            south: 53.33,
-            west: -6.3101,
+            south: 53.3,
+            west: -6.3103,
             east: -6.2305,
         };
 //Makes Map
@@ -134,16 +134,21 @@ function initMap() {
                             lat: position.coords.latitude,
                             lng: position.coords.longitude,
                         };
-                    locationWindow.setPosition(pos);
-                    locationWindow.setContent("Location found.");
-                    locationWindow.open(map);
-                    map.setCenter(pos);
+                    //Due to the area is restricted, there needs to check if the user is in the area
+                    if (position.coords.latitude>53.365||position.coords.latitude<53.325||position.coords.longitude>-6.2307||position.coords.longitude<-6.3101){
+                            handleLocationError("type1", locationWindow, map.getCenter());
+                    }else{
+                            locationWindow.setPosition(pos);
+                            locationWindow.setContent("Location found.");
+                            locationWindow.open(map);
+                            map.setCenter(pos);
+                    }
                },() => {
-                    handleLocationError(true, locationWindow, map.getCenter());
+                    handleLocationError("type2", locationWindow, map.getCenter());
                      });
            } else {
                // Browser doesn't support Geolocation
-               handleLocationError(false, locationWindow, map.getCenter());
+               handleLocationError("type3", locationWindow, map.getCenter());
            }
       });
       //Use google map geocoding API to find the search result, this function is learnt from Google map geocoding API sample
@@ -191,11 +196,15 @@ function makeGraphs(station){
 //Handle geoLocation Error
 function handleLocationError(browserHasGeolocation, locationWindow, pos) {
         locationWindow.setPosition(pos);
-        locationWindow.setContent(
-            browserHasGeolocation
-                    ? "Error: The Geolocation service failed."
-                    : "Error: Your browser doesn't support geolocation."
-        );
+        if (browserProblem=="type1"){
+                var problem="Error: Currently there is no station near your position"
+            }else{
+                if (browserProblem=="type2"){
+                    var problem="Error: The Geolocation service failed."
+                }else{
+                    var problem="Error: Your browser doesn't support geolocation."
+                }
+            }
         locationWindow.open(map);
  }
 //Calculate And Display Route with google direction API, this function is learnt from Google map direction API sample
@@ -213,7 +222,7 @@ function calculateAndDisplayRoute(directionsService, directionsRenderer) {
             }
         );
 }
-//Display the station the user is searching for on the map with google geocoding API, this function is learnt from Google map reverse geocoding API sample
+//Display the station the user is searching for on the map with google geocoding API, this function is learnt from Google map reverse geocoding sample
 function geocodeLatLng(geocoder, map, searchwindow) {
                 var searchInput=document.getElementById("search_datalist").value;
                 if(!searchInput) return;
