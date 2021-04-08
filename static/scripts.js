@@ -16,7 +16,7 @@ DUBLIN_LNG = -6.260310;
         var station_list ='<input list="station_datalist" class="input"  id="search_datalist" ><datalist id="station_datalist">';
         //station_option is to store all the options for route planning
         var station_option="<option value=''> </option>";
-const DUBLIN_BOUNDS = {
+	const DUBLIN_BOUNDS = {
             north: 53.4,
             south: 53.33,
             west: -6.3101,
@@ -32,7 +32,7 @@ function initMap() {
                             strictBounds: false,
                         },
                 disableDefaultUI: true,
-		//The map style is learnt from Google map style sample-Night Mode
+		//The map style is learnt from Google map style Night Mode sample
                 styles: [
                             {elementType: "geometry", stylers: [{ color: "#242f3e" }]},
                             {elementType: "labels.text.stroke",stylers: [{ color: "#242f3e" }]},
@@ -150,7 +150,7 @@ function initMap() {
       document.getElementById("submit").addEventListener("click", () => {
                 geocodeLatLng(geocoder, map, searchwindow);
             });
-      //Calculate And Display Route with google direction API
+      //Calculate And Display Route with google direction API, this function is learnt from Google map direction API sample
       const directionsService = new google.maps.DirectionsService();
       const directionsRenderer = new google.maps.DirectionsRenderer();
       directionsRenderer.setMap(map);
@@ -188,7 +188,7 @@ function makeGraphs(station){
         chart.draw(chart_data, weekly_options);
     });
 }
-//Handle Location Error
+//Handle geoLocation Error
 function handleLocationError(browserHasGeolocation, locationWindow, pos) {
         locationWindow.setPosition(pos);
         locationWindow.setContent(
@@ -198,7 +198,7 @@ function handleLocationError(browserHasGeolocation, locationWindow, pos) {
         );
         locationWindow.open(map);
  }
-//Calculate And Display Route with google direction API
+//Calculate And Display Route with google direction API, this function is learnt from Google map direction API sample
 function calculateAndDisplayRoute(directionsService, directionsRenderer) {
        directionsService.route({
                 origin: {query: document.getElementById("start").value,},
@@ -213,7 +213,7 @@ function calculateAndDisplayRoute(directionsService, directionsRenderer) {
             }
         );
 }
-//Display the station the user is searching for on the map with google geocoding API, this function is learnt from Google map geocoding API sample
+//Display the station the user is searching for on the map with google geocoding API, this function is learnt from Google map reverse geocoding API sample
 function geocodeLatLng(geocoder, map, searchwindow) {
                 var searchInput=document.getElementById("search_datalist").value;
                 if(!searchInput) return;
