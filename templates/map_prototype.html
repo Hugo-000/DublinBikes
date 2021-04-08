@@ -10,8 +10,15 @@
     <div id="nav">
         <input onclick="hideMarkers();" type="button" value="bank=1" />
         <input onclick="showMarkers();" type="button" value="bank=0/1" />
+        <input onclick="show_available_bikes();" type="button" value="available_bikes" />
+        <input onclick="show_available_spaces();" type="button" value="available_spaces" />
+        <input onclick="show_available_e_bikes();" type="button" value="available_E-bikes" />
         <b>Start: </b><select id="start"></select>
         <b>End: </b><select id="end"></select>
+    </div>
+    <div>
+        <input type="text" name="search" class="input" >
+        <div id="SelectedStation"></div>
     </div>
     <div id="map"></div>
     <script>
@@ -19,6 +26,21 @@
         //markers0 is the stations that banking=0
         let markers0 = [];
         let markers1 = [];
+        //markers_label is the availability
+        var markers0_label_bikes=[];
+        var markers0_label_spaces=[];
+        var markers0_label_e_bikes=[];
+        var markers1_label_bikes=[];
+        var markers1_label_spaces=[];
+        var markers1_label_e_bikes=[];
+        //station_list is the list to store all the station names
+        var station_list = [];
+        //position_list is the list to store all the station position
+        var position_list = [];
+        //station_option is to store all the options for route planning
+        var station_option="<option value=''> </option>";
+        var user_input = document.getElementsByClassName("input")[0];
+        var SelectedStation = document.getElementById("SelectedStation");
         function initMap() {
             map = new google.maps.Map(document.getElementById("map"), {
                         center: { lat: 53.349804, lng: -6.260310 },
@@ -26,7 +48,6 @@
             });
             //Create an info window to share between markers
             const stationWindow= new google.maps.InfoWindow();
-
             //The function to display the Markers with corresponding information
             fetch("/get_availability").then(response =>{
                 return response.json();
@@ -34,57 +55,43 @@
                 fetch("/get_stations").then(response => {
                      return response.json();
                 }).then(stations => {
-                     var station_option="<option value=''> </option>";
                      stations.forEach(station => {
                         availability_data.forEach(availability => {
                             if (station.number == availability.number){
                                 station_option+="<option value='"+station.latitude+","+station.longitude+"'>"+station.name+"</option>";
+                                station_list.push(station.name);
+                                position_list.push(station.latitude+","+station.longitude)
+                                const marker = new google.maps.Marker({
+                                        position: {lat: station.latitude, lng: station.longitude},
+                                        map: map,
+                                        title:station.name,
+                                        label:`${availability.available_bikes}`,
+                                        optimized: false,
+                                });
+                                marker.addListener("click", () => {
+                                        stationWindow.close();
+                                        var station_info='<h1>Station ' + station.number + '</h1><h2>' + station.address
+                                                    + '</h2><ul><li>Status' + availability.status
+                                                    + '</li><li>Banking' + station.banking
+                                                    + '</li><li>Bikes: ' +  availability.available_bikes
+                                                    + '<ul><li>Mechanical: ' + availability.mechanical_bikes
+                                                    + '<li>Electrical: ' + availability.electrical_bikes
+                                                    + '<ul><li>Internal_Battery: ' + availability.electrical_internal_battery_bikes
+                                                    + '</li><li>Removable_Battery: ' + availability.electrical_removable_battery_bikes
+                                                    + '</li></ul></li></ul></li><li>Stands: ' + availability.available_bike_stands +'/' + availability.bike_stands + '</li>';
+                                        stationWindow.setContent(station_info);
+                                        stationWindow.open(marker.getMap(), marker);
+                                });
                                 if (station.banking == "1"){
-                                    const marker = new google.maps.Marker({
-                                        position: {lat: station.latitude, lng: station.longitude},
-                                        map: map,
-                                        title:station.name,
-                                        label:`${availability.available_bikes}`,
-                                        optimized: false,
-                                    });
-                                    marker.addListener("click", () => {
-                                        stationWindow.close();
-                                        var station_info='<h1>Station ' + station.number + '</h1><h2>' + station.address +'</h2>'
-                                                    + '<ul><li>Status' + availability.status + '</li>'
-                                                    + '<li>Banking' + station.banking +  '</li>'
-                                                    + '<li>Bikes: ' +  availability.available_bikes +'/' + availability.bike_stands + '<ul>'
-                                                    + '<li>Mechanical: ' + availability.mechanical_bikes
-                                                    + '<li>Electrical: ' + availability.electrical_bikes + '<ul>'
-                                                    + '<li>Internal_Battery: ' + availability.electrical_internal_battery_bikes + '</li>'
-                                                    + '<li>Removable_Battery: ' + availability.electrical_removable_battery_bikes + '</li></ul></li></ul></li>'
-                                                    + '<li>Stands: ' + availability.available_bike_stands +'/' + availability.bike_stands + '</li>';
-                                        stationWindow.setContent(station_info);
-                                        stationWindow.open(marker.getMap(), marker);
-                                    });
-                                    markers1.push(marker);
+                                        markers1.push(marker);
+                                        markers1_label_bikes.push(String(availability.available_bikes));
+                                        markers1_label_spaces.push(String(availability.available_bike_stands));
+                                        markers1_label_e_bikes.push(String(availability.electrical_bikes));
                                 } else {
-                                    const marker = new google.maps.Marker({
-                                        position: {lat: station.latitude, lng: station.longitude},
-                                        map: map,
-                                        title:station.name,
-                                        label:`${availability.available_bikes}`,
-                                        optimized: false,
-                                    });
-                                    marker.addListener("click", () => {
-                                        stationWindow.close();
-                                        var station_info='<h1>Station ' + station.number + '</h1><h2>' + station.address +'</h2>'
-                                                    + '<ul><li>Status' + availability.status + '</li>'
-                                                    + '<li>Banking' + station.banking +  '</li>'
-                                                    + '<li>Bikes: ' +  availability.available_bikes +'/' + availability.bike_stands + '<ul>'
-                                                    + '<li>Mechanical: ' + availability.mechanical_bikes
-                                                    + '<li>Electrical: ' + availability.electrical_bikes + '<ul>'
-                                                    + '<li>Internal_Battery: ' + availability.electrical_internal_battery_bikes + '</li>'
-                                                    + '<li>Removable_Battery: ' + availability.electrical_removable_battery_bikes + '</li></ul></li></ul></li>'
-                                                    + '<li>Stands: ' + availability.available_bike_stands +'/' + availability.bike_stands + '</li>';
-                                        stationWindow.setContent(station_info);
-                                        stationWindow.open(marker.getMap(), marker);
-                                    });
-                                    markers0.push(marker);
+                                        markers0.push(marker);
+                                        markers0_label_bikes.push(String(availability.available_bikes));
+                                        markers0_label_spaces.push(String(availability.available_bike_stands));
+                                        markers0_label_e_bikes.push(String(availability.electrical_bikes));
                                 }
                                 document.getElementById("start").innerHTML=station_option;
                                 document.getElementById("end").innerHTML=station_option;
@@ -156,6 +163,91 @@
             );
         }
 
+        //Display Result when the user click on search bar
+            user_input.onfocus = function(){
+                var stationButtons = document.createElement("div");
+                stationButtons.id = "buttons";
+                SelectedStation.appendChild(stationButtons);
+	            showResult();
+	            }
+
+        //Display Result when the user is inputting
+            user_input.oninput = function() {
+                var buttons_before = document.getElementById("buttons");
+	            SelectedStation.removeChild(buttons_before);
+	            var stationButtons = document.createElement("div");
+                stationButtons.id = "buttons";
+                SelectedStation.appendChild(stationButtons);
+                showResult();
+                }
+
+         //Delete the result when the user click on somewhere else
+            user_input.onblur = function(){
+                 var buttons_before = document.getElementById("buttons");
+                 SelectedStation.removeChild(buttons_before);
+                 }
+
+        //Create buttons that stands for the stations that the user is probably searching for
+            function showResult(){
+                   var result_index = searchForInput(user_input.value,station_list);
+                   for(var i=0;i<result_index.length;i++){
+                        var station_button = document.createElement("BUTTON");
+                        var index=result_index[i];
+                        var station_name = document.createTextNode(station_list[index]);
+                        station_button.appendChild(station_name);
+
+                        document.getElementById("buttons").appendChild(station_button);
+                    }
+                }
+
+        //Search for the station which the user click on
+            function SearchForThis(index){
+                var target_position=position_list[index];
+                geocodeLatLng(geocoder, map, infowindow, target_position)
+                var buttons_before = document.getElementById("buttons");
+                SelectedStation.removeChild(buttons_before);
+                }
+            function geocodeLatLng(geocoder, map, infowindow,input) {
+                const latlngStr = input.split(",", 2);
+                const latlng = {
+                    lat: parseFloat(latlngStr[0]),
+                    lng: parseFloat(latlngStr[1]),
+                };
+                geocoder.geocode({ location: latlng }, (results, status) => {
+                    if (status === "OK") {
+                        if (results[0]) {
+                            map.setZoom(14);
+                            const marker = new google.maps.Marker({
+                                position: latlng,
+                                map: map,
+                                });
+                            infowindow.setContent(results[0].formatted_address);
+                            infowindow.open(map, marker);
+                        } else {
+                            window.alert("No results found");
+                        }
+                    } else {
+                        window.alert("Geocoder failed due to: " + status);
+                    }
+                });
+            }
+        //Search for the stations that the user is probably searching for
+            function searchForInput(theInput, theList){
+                if(theInput == ""){
+    	            return [];
+                }else{
+                	var search_input=theInput.toUpperCase();
+	                var result_list = [];
+	                for(var i=0;i<theList.length;i++){
+	                    var index=theList[i].indexOf(search_input);
+	                    if(index>=0){
+	                        result_list.push(index);
+	                    }
+	                }
+	                return result_list;
+                }
+            }
+
         //Handle Location Error
         function handleLocationError(browserHasGeolocation, infoWindow, pos) {
             infoWindow.setPosition(pos);
@@ -165,6 +257,34 @@
                     : "Error: Your browser doesn't support geolocation."
             );
             infoWindow.open(map);
+        }
+
+        // Shows bikes availability on the marker
+        function show_available_bikes() {
+           for (let i = 0; i < markers1.length; i++) {
+                  markers1[i].setLabel(markers1_label_bikes[i]);
+           }
+           for (let i = 0; i < markers0.length; i++) {
+                  markers0[i].setLabel(markers0_label_bikes[i]);
+           }
+        }
+        // Shows spaces availability on the marker
+        function show_available_spaces() {
+           for (let i = 0; i < markers1.length; i++) {
+                  markers1[i].setLabel(markers1_label_spaces[i]);
+           }
+           for (let i = 0; i < markers0.length; i++) {
+                  markers0[i].setLabel(markers0_label_spaces[i]);
+           }
+        }
+        // Shows e-bikes availability on the marker
+        function show_available_e_bikes() {
+           for (let i = 0; i < markers1.length; i++) {
+                  markers1[i].setLabel(markers1_label_e_bikes[i]);
+           }
+           for (let i = 0; i < markers0.length; i++) {
+                  markers0[i].setLabel(markers0_label_e_bikes[i]);
+           }
         }
 
         // Hide the markers0.
