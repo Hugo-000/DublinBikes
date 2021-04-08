@@ -13,10 +13,10 @@
     
   <body>
     <div id="nav">
-	<div id="search_bar_datalist"></div>
 	<input id="submit" type="button" value="Search" />
-        <input onclick="hideMarkers();" type="button" value="bank=1" />
-        <input onclick="showMarkers();" type="button" value="bank=0/1" />
+	<div id="search_bar_datalist"></div>
+        <input onclick="showhideMarkers();" type="button" value="banking_switch" />
+        <input type="checkbox" id="banking_switch" style="display:None">
         <input onclick="show_available_bikes();" type="button" value="available_bikes" />
         <input onclick="show_available_spaces();" type="button" value="available_spaces" />
         <input onclick="show_available_e_bikes();" type="button" value="available_E-bikes" />
