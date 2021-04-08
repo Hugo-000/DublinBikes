@@ -13,6 +13,8 @@
     
   <body>
     <div id="nav">
+	<div id="search_bar_datalist"></div>
+	<input id="submit" type="button" value="Search" />
         <input onclick="hideMarkers();" type="button" value="bank=1" />
         <input onclick="showMarkers();" type="button" value="bank=0/1" />
         <input onclick="show_available_bikes();" type="button" value="available_bikes" />
@@ -21,9 +23,6 @@
         <b>Start: </b><select id="start"></select>
         <b>End: </b><select id="end"></select>
     </div>
-    <div id="search_bar">
-        <input type="text" name="search" class="input" >
-        <div id="SelectedStation"></div>
     </div>
     <div id="map"></div>
     <div id ="weather"></div>
