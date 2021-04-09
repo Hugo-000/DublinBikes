@@ -58,7 +58,7 @@ function initMap() {
     });
     
     //Create an info window to share between markers
-    const stationWindow= new google.maps.InfoWindow();
+    var stationWindow= new google.maps.InfoWindow();
     //Create a search window to display the search result
     const geocoder = new google.maps.Geocoder();
     const searchwindow = new google.maps.InfoWindow();
@@ -83,8 +83,13 @@ function initMap() {
                             optimized: false,
                         });
                         marker.addListener("click", () => {
-                            displayCurrentInfo(station, availability, marker, stationWindow);
-                            makeGraphs(station);
+                                     if(document.getElementById("prediction_switch").value == 0){
+                                            displayCurrentInfo(station, availability, marker, stationWindow);
+                                            makeGraphs(station);
+
+                                     }else{
+                                            displayPrediction(map, marker, station, stationWindow);
+                                        }
                         });
                         if (station.banking == "1"){
                                 markers1.push(marker);
@@ -156,6 +161,21 @@ function initMap() {
       document.getElementById("start").addEventListener("change", onChangeHandler);
       document.getElementById("end").addEventListener("change", onChangeHandler);
 }
+
+function displayPrediction(map, marker, station, infoWindow) {
+
+    date = document.getElementById("date").value
+    time = document.getElementById("time").value
+
+    fetch("/get_prediction/"+station.number+"/"+String(date) +"T" + time).then (response => {
+        return response.json();
+    }).then(prediction => {
+        infoWindow.setContent('<h3>'  + time + '</h3><h3>Estimated Bikes: ' + prediction + "</h3>");
+        infoWindow.open(map, marker);
+        console.log(prediction)
+    });
+    }
+
 
 function displayCurrentInfo(station, availability, marker, stationWindow){
     stationWindow.close()
@@ -355,5 +375,9 @@ function initCharts(){
     google.charts.setOnLoadCallback(initMap);
     google.charts.load('current', {'packages':['bar']});
     }
+
+function change() {
+
+}
 
 
