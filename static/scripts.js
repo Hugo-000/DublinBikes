@@ -141,7 +141,7 @@ function initMap() {
                             locationWindow.setPosition(pos);
                             locationWindow.setContent("Location found.");
                             locationWindow.open(map);
-                            map.setCenter(pos);
+                            
                     }
                },() => {
                     handleLocationError("type2", locationWindow, map.getCenter());
@@ -194,7 +194,7 @@ function makeGraphs(station){
     });
 }
 //Handle geoLocation Error
-function handleLocationError(browserHasGeolocation, locationWindow, pos) {
+function handleLocationError(browserProblem, locationWindow, pos) {
         locationWindow.setPosition(pos);
         if (browserProblem=="type1"){
                 var problem="Error: Currently there is no station near your position"
@@ -204,7 +204,8 @@ function handleLocationError(browserHasGeolocation, locationWindow, pos) {
                 }else{
                     var problem="Error: Your browser doesn't support geolocation."
                 }
-            }
+            };
+	locationWindow.setContent(problem);
         locationWindow.open(map);
  }
 //Calculate And Display Route with google direction API, this function is learnt from Google map direction API sample
