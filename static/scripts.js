@@ -162,7 +162,7 @@ function displayCurrentInfo(station, availability, marker, stationWindow){
     pay_terminal = station.banking ? "Yes" : "No";
     var station_info='<h1>Station ' + station.number + '</h1><h2>' + station.address
         + '</h2><ul><li>Status: ' + availability.status
-        + '</li><li>Banking' + pay_terminal
+        + '</li><li>Banking: ' + pay_terminal
         + '</li><li>Bikes: ' +  availability.available_bikes
         + '<ul><li>Mechanical: ' + availability.mechanical_bikes
         + '<li>Electrical: ' + availability.electrical_bikes
