@@ -83,7 +83,7 @@ function initMap() {
                             optimized: false,
                         });
                         marker.addListener("click", () => {
-                                     if(document.getElementById("prediction_switch").value == 0){
+                                     if(document.getElementById("prediction_switch").checked == false){
                                             displayCurrentInfo(station, availability, marker, stationWindow);
                                             makeGraphs(station);
 
@@ -376,8 +376,6 @@ function initCharts(){
     google.charts.load('current', {'packages':['bar']});
     }
 
-function change() {
 
-}
 
 
