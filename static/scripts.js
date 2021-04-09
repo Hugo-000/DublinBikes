@@ -3,8 +3,8 @@ DUBLIN_LNG = -6.260310;
 
 const DUBLIN_BOUNDS = {
             north: 53.4,
-            south: 53.33,
-            west: -6.3101,
+            south: 53.3,
+            west: -6.3103,
             east: -6.2305,
 };
 
@@ -34,7 +34,7 @@ function initMap() {
             strictBounds: false,
         },
         disableDefaultUI: true,
-		//The map style is learnt from Google map style Night Mode sample
+	//The map style is learnt from Google map style Night Mode sample
         styles: [
             {elementType: "geometry", stylers: [{ color: "#242f3e" }]},
             {elementType: "labels.text.stroke",stylers: [{ color: "#242f3e" }]},
@@ -126,16 +126,20 @@ function initMap() {
                             lat: position.coords.latitude,
                             lng: position.coords.longitude,
                         };
-                    locationWindow.setPosition(pos);
-                    locationWindow.setContent("Location found.");
-                    locationWindow.open(map);
-                    map.setCenter(pos);
+                    //Due to the area of the map is restricted, there needs to check if the user is near the staions
+                    if (position.coords.latitude>53.365||position.coords.latitude<53.325||position.coords.longitude>-6.2307||position.coords.longitude<-6.3101){
+                            handleLocationError("type1", locationWindow, map.getCenter());
+                    }else{
+                            locationWindow.setPosition(pos);
+                            locationWindow.setContent("Location found.");
+                            locationWindow.open(map);
+                    }
                },() => {
-                    handleLocationError(true, locationWindow, map.getCenter());
+                    handleLocationError("type2", locationWindow, map.getCenter());
                      });
            } else {
                // Browser doesn't support Geolocation
-               handleLocationError(false, locationWindow, map.getCenter());
+               handleLocationError("type3", locationWindow, map.getCenter());
            }
       });
       //Use google map geocoding API to find the search result, this function is learnt from Google map geocoding API sample
@@ -197,13 +201,18 @@ function makeGraphs(station){
     });
 }
 //Handle geoLocation Error
-function handleLocationError(browserHasGeolocation, locationWindow, pos) {
+function handleLocationError(browserProblem, locationWindow, pos) {
         locationWindow.setPosition(pos);
-        locationWindow.setContent(
-            browserHasGeolocation
-                    ? "Error: The Geolocation service failed."
-                    : "Error: Your browser doesn't support geolocation."
-        );
+        if (browserProblem=="type1"){
+                var problem="Error: Currently there is no station near your position"
+        }else{
+                if (browserProblem=="type2"){
+                    var problem="Error: The Geolocation service failed."
+                }else{
+                    var problem="Error: Your browser doesn't support geolocation."
+                }
+        };
+	locationWindow.setContent(problem);
         locationWindow.open(map);
  }
 //Calculate And Display Route with google direction API, this function is learnt from Google map direction API sample
