@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+input[type=checkbox]{
+	height: 0;
+	width: 0;
+	visibility: hidden;
+}
+.css_checkbox {
+	cursor: pointer;
+	text-indent: -9999px;
+	width: 80px;
+	height: 40px;
+	background: grey;
+	display: block;
+    border: 2px solid #008CBA;
+	border-radius: 40px;
+	position: relative;
+}
+.css_checkbox:after {
+	content: '';
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: 36px;
+	height: 36px;
+	background: #fff;
+	border-radius: 36px;
+	transition: 0.3s;
+}
+input:checked + .css_checkbox {
+	background: #008CBA;
+}
+input:checked + .css_checkbox:after {
+	left: calc(100% - 2px);
+	transform: translateX(-100%);
+}
+.css_checkbox:active:after {
+	width: 25px;
+}
+.search_button {
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  transition-duration: 0.4s;
+  cursor: pointer;
+  padding: 5px 15px;
+  font-size: 30px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: white;
+  background-color: transparent;
+  border: 2px solid #008CBA;
+  border-radius: 15px;
+  box-shadow: 0 9px grey;
+}
+.search_button:hover {
+	background-color: #008CBA;
+	}
+.search_button:active {
+  background-color: ;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+</style>
+</head>
+<body>
+<input type="checkbox" id="switch" /><label for="switch" class="css_checkbox"></label>
+<p>Set the target checkbox label class css_checkbox</p>
+<button class="search_button">Search</button>
+<p>Set the target button class search_button</p>
+</body>
+</html>
