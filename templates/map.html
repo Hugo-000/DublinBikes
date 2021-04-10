@@ -76,19 +76,19 @@
             </div>
         </div>
            
-        <div class = "row bg-secondary">
-            <div class="col-12 col-lg-10">
+        <div class = "row">
+            <div class="col-12 col-xl-10">
                 <div id="map" class = "map-responsive"></div>
                 <div id ="Week_Charts"></div>
             </div>
-            <div class = "col-12 col-lg-2 text-light text-center">
+            <div class = "col-12 col-xl-2 text-light text-center">
                 <div class= "container-fluid">
                     <div class="row">
-                        <div class="col-md-6 col-lg-12">
+                        <div class="col-md-6 col-xl-12">
                             <h2>Weather</h2>
                             <div id ="weather"></div>
                         </div>
-                        <div class="col-md-6 col-lg-12">
+                        <div class="col-md-6 col-xl-12">
                             <h2>Bike Prediction</h2>
                             <div id = "prediction-time">
                                 <ul class="list-unstyled">
@@ -129,12 +129,14 @@
                                     </li>
                                 </ul>
                             </div>
+                            <div id = "display-prediction"></div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <!--
     <script>
         $(document).ready(function(){
             $("#graph_button").click(function(){
@@ -142,6 +144,7 @@
             });
         });
     </script>
+    -->
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAubX7dljs_6l5yelGgSdoKArHWgYTwSdk&callback=initCharts&libraries=&v=weekly" async ></script>
 
 </body>

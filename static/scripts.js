@@ -1,5 +1,5 @@
-DUBLIN_LAT = 53.349804;
-DUBLIN_LNG = -6.260310;
+const DUBLIN_LAT = 53.349804;
+const DUBLIN_LNG = -6.260310;
 
 const DUBLIN_BOUNDS = {
             north: 53.4,
@@ -83,24 +83,22 @@ function initMap() {
                             optimized: false,
                         });
                         marker.addListener("click", () => {
-                                     if(document.getElementById("prediction_switch").checked == false){
-                                            displayCurrentInfo(station, availability, marker, stationWindow);
-                                            makeGraphs(station);
-
-                                     }else{
-                                            displayPrediction(map, marker, station, stationWindow);
-                                        }
+                            if(document.getElementById("prediction_switch").checked == true){
+                                displayPrediction(station);
+                                }
+                            displayCurrentInfo(station, availability, marker, stationWindow);
+                            makeGraphs(station);
                         });
                         if (station.banking == "1"){
-                                markers1.push(marker);
-                                markers1_label_bikes.push(String(availability.available_bikes));
-                                markers1_label_spaces.push(String(availability.available_bike_stands));
-                                markers1_label_e_bikes.push(String(availability.electrical_bikes));
+                            markers1.push(marker);
+                            markers1_label_bikes.push(String(availability.available_bikes));
+                            markers1_label_spaces.push(String(availability.available_bike_stands));
+                            markers1_label_e_bikes.push(String(availability.electrical_bikes));
                         } else {
-                                markers0.push(marker);
-                                markers0_label_bikes.push(String(availability.available_bikes));
-                                markers0_label_spaces.push(String(availability.available_bike_stands));
-                                markers0_label_e_bikes.push(String(availability.electrical_bikes));
+                            markers0.push(marker);
+                            markers0_label_bikes.push(String(availability.available_bikes));
+                            markers0_label_spaces.push(String(availability.available_bike_stands));
+                            markers0_label_e_bikes.push(String(availability.electrical_bikes));
                         }
                     }
                 }) 
@@ -162,7 +160,7 @@ function initMap() {
     document.getElementById("end").addEventListener("change", onChangeHandler);
 }
 
-function displayPrediction(map, marker, station, infoWindow) {
+function displayPrediction(station) {
 
     date = document.getElementById("date").value
     time = document.getElementById("time").value
@@ -170,9 +168,11 @@ function displayPrediction(map, marker, station, infoWindow) {
     fetch("/get_prediction/"+station.number+"/"+String(date) +"T" + time).then (response => {
         return response.json();
     }).then(prediction => {
-        infoWindow.setContent('<h3>'  + time + '</h3><h3>Estimated Bikes: ' + prediction + "</h3>");
-        infoWindow.open(map, marker);
-        console.log(prediction)
+        content = "<h5>" + station.name + "</h5><ul class='list-unstyled'><li>" +
+            "Station No: " + station.number + "</li><li>"
+            + date + "T" + time + "</li><li>" +
+            "Predicted Bikes: " + prediction + "</li>";
+        document.getElementById("display-prediction").innerHTML = content;
     });
     }
 
@@ -180,8 +180,8 @@ function displayPrediction(map, marker, station, infoWindow) {
 function displayCurrentInfo(station, availability, marker, stationWindow){
     stationWindow.close()
     pay_terminal = station.banking ? "Yes" : "No";
-    var station_info='<h1>Station ' + station.number + '</h1><h2>' + station.address
-        + '</h2><ul><li>Status: ' + availability.status
+    var station_info='<h3>' + station.address + '</h3><h4>Station ' + station.number
+        + '</h4><ul><li>Status: ' + availability.status
         + '</li><li>Banking: ' + pay_terminal
         + '</li><li>Bikes: ' +  availability.available_bikes
         + '<ul><li>Mechanical: ' + availability.mechanical_bikes
@@ -329,7 +329,7 @@ function get_current_weather(id) {
             "C</li><li>Humidity: " + data[0]['humidity'] +
             "%</li><li>Visibility: " + data[0]['visibility'] + 
             "m</li><li>Wind Speed: " + data[0]['wind_speed'] +
-            "m/s</li></ul><p>Time Taken: " + date + "<p>"
+            "m/s</li></ul>";
         document.getElementById(id).innerHTML = content;
     })
     .catch(err => {
@@ -339,6 +339,11 @@ function get_current_weather(id) {
 
 get_current_weather("weather");
 
+$(document).ready(function(){
+    $("#graph_button").click(function(){
+        $("#Week_Charts").slideToggle();
+    });
+});
 
 function initCharts(){
     google.charts.load('current',{'packages':['corechart']});
