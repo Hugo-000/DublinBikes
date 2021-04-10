@@ -9,10 +9,10 @@ const DUBLIN_BOUNDS = {
 };
 
 let map;
-//markers0 is the stations that banking=0
+//markers0 is is a list of all stations with no payment terminals
 let markers0 = [];
 let markers1 = [];
-//markers_label is the availability
+//Labels for the map markers
 var markers0_label_bikes=[];
 var markers0_label_spaces=[];
 var markers0_label_e_bikes=[];
@@ -213,7 +213,7 @@ function makeGraphs(station){
         var chart_data = new google.visualization.DataTable();
         chart_data.addColumn("datetime", "Date");
         chart_data.addColumn("number", "Bikes");
-        chart_data.addColumn("number", "Free Spaces");
+        chart_data.addColumn("number", "Spaces");
         data.forEach(x=>{
                     chart_data.addRow([new Date(x.last_update),x.available_bikes,x.available_bike_stands]);
         })
@@ -302,35 +302,6 @@ function change_labels(x){
     }
 }
 
-
-
-function show_available_bikes() {
-       for (let i = 0; i < markers1.length; i++) {
-                  markers1[i].setLabel(markers1_label_bikes[i]);
-        }
-        for (let i = 0; i < markers0.length; i++) {
-                  markers0[i].setLabel(markers0_label_bikes[i]);
-        }
-}
-// Shows spaces availability on the marker
-function show_available_spaces() {
-        for (let i = 0; i < markers1.length; i++) {
-                  markers1[i].setLabel(markers1_label_spaces[i]);
-           }
-           for (let i = 0; i < markers0.length; i++) {
-                  markers0[i].setLabel(markers0_label_spaces[i]);
-           }
-}
- // Shows e-bikes availability on the marker
-function show_available_e_bikes() {
-           for (let i = 0; i < markers1.length; i++) {
-                  markers1[i].setLabel(markers1_label_e_bikes[i]);
-           }
-           for (let i = 0; i < markers0.length; i++) {
-                  markers0[i].setLabel(markers0_label_e_bikes[i]);
-           }
-}
-
 // Show/Hide the markers0.
 function showhideMarkers() {
             if(document.getElementById("banking_switch").checked == true){
@@ -353,13 +324,13 @@ function get_current_weather(id) {
         .then(function(data) {
         var content = "";
         var date = new Date(data[0]['time']);
-        content = "<h2>" + data[0]['main'] + "</h2><img src='http://openweathermap.org/img/wn/"+ data[0]['icon'] +".png' class='img-fluid'>" +
+        content = "<h3>" + data[0]['main'] + "</h3><img src='http://openweathermap.org/img/wn/"+ data[0]['icon'] +".png' class='img-fluid'>" +
             "<ul class='text-justify'><li>" + data[0]['description'] + 
             "</li><li>Temperature: " + data[0]['temp'] + 
             "C</li><li>Humidity: " + data[0]['humidity'] +
             "%</li><li>Visibility: " + data[0]['visibility'] + 
             "m</li><li>Wind Speed: " + data[0]['wind_speed'] +
-            "m/s</li></ul><p class='text-secondary'>Time Taken: " + date + "<p>"
+            "m/s</li></ul><p>Time Taken: " + date + "<p>"
         document.getElementById(id).innerHTML = content;
     })
     .catch(err => {

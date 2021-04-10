@@ -12,7 +12,13 @@ app = Flask(__name__)
 
 @app.route("/prototype")
 def prototype():
-    return render_template("map_prototype.html")
+    engine = create_engine(
+        "mysql+mysqlconnector://{}:{}@{}:{}/{}".format(dbinfo.USER, dbinfo.PASSWORD, dbinfo.URI, dbinfo.PORT,
+                                                       dbinfo.DB), echo=True)
+    df = pd.read_sql("SELECT max(time) FROM daily_predictions;", engine)
+    now = dt.datetime.now(tz=pytz.timezone('Europe/Dublin'))
+    maxTime = df.to_dict(orient='records')
+    return render_template("test.html", maxTime=maxTime[0]['max(time)'], minTime=now)
 
 #for accessing map.html
 @app.route("/")

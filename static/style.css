@@ -19,6 +19,15 @@ html, body {
     padding: 0;
 }
 
+
+#Week_Charts {
+    position: absolute;
+    top: 0;
+    display: none;
+    padding: 0;
+    margin: 0;
+}
+
 /*
 #map {
   height: 70%;
