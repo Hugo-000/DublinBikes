@@ -121,45 +121,45 @@ function initMap() {
     locationButton.textContent = "Move to Current Location";
     locationButton.classList.add("custom-map-control-button");
     map.controls[google.maps.ControlPosition.TOP_CENTER].push(
-                locationButton
-            );
+        locationButton
+    );
     locationButton.addEventListener("click", () => {
-          if (navigator.geolocation) {
-               navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const pos = {
-                            lat: position.coords.latitude,
-                            lng: position.coords.longitude,
-                        };
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const pos = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                    };
                     //Due to the area of the map is restricted, there needs to check if the user is near the staions
                     if (position.coords.latitude>53.365||position.coords.latitude<53.325||position.coords.longitude>-6.2307||position.coords.longitude<-6.3101){
-                            handleLocationError("type1", locationWindow, map.getCenter());
+                        handleLocationError("type1", locationWindow, map.getCenter());
                     }else{
-                            locationWindow.setPosition(pos);
-                            locationWindow.setContent("Location found.");
-                            locationWindow.open(map);
+                        locationWindow.setPosition(pos);
+                        locationWindow.setContent("Location found.");
+                        locationWindow.open(map);
                     }
                },() => {
                     handleLocationError("type2", locationWindow, map.getCenter());
-                     });
-           } else {
-               // Browser doesn't support Geolocation
-               handleLocationError("type3", locationWindow, map.getCenter());
-           }
-      });
+               });
+        }else {
+            // Browser doesn't support Geolocation
+            handleLocationError("type3", locationWindow, map.getCenter());
+        }
+    });
       //Use google map geocoding API to find the search result, this function is learnt from Google map geocoding API sample
-      document.getElementById("submit").addEventListener("click", () => {
-                geocodeLatLng(geocoder, map, searchwindow);
-            });
-      //Calculate And Display Route with google direction API, this function is learnt from Google map direction API sample
-      const directionsService = new google.maps.DirectionsService();
-      const directionsRenderer = new google.maps.DirectionsRenderer();
-      directionsRenderer.setMap(map);
-      const onChangeHandler = function () {
-           calculateAndDisplayRoute(directionsService, directionsRenderer);
-      };
-      document.getElementById("start").addEventListener("change", onChangeHandler);
-      document.getElementById("end").addEventListener("change", onChangeHandler);
+    document.getElementById("search_button").addEventListener("click", () => {
+        geocodeLatLng(geocoder, map, searchwindow);
+    });
+    //Calculate And Display Route with google direction API, this function is learnt from Google map direction API sample
+    const directionsService = new google.maps.DirectionsService();
+    const directionsRenderer = new google.maps.DirectionsRenderer();
+    directionsRenderer.setMap(map);
+    const onChangeHandler = function () {
+        calculateAndDisplayRoute(directionsService, directionsRenderer);
+    };
+    document.getElementById("start").addEventListener("change", onChangeHandler);
+    document.getElementById("end").addEventListener("change", onChangeHandler);
 }
 
 function displayPrediction(map, marker, station, infoWindow) {
@@ -222,61 +222,61 @@ function makeGraphs(station){
 }
 //Handle geoLocation Error
 function handleLocationError(browserProblem, locationWindow, pos) {
-        locationWindow.setPosition(pos);
-        if (browserProblem=="type1"){
-                var problem="Error: Currently there is no station near your position"
+    locationWindow.setPosition(pos);
+    if (browserProblem=="type1"){
+        var problem="Error: Currently there is no station near your position"
+    }else{
+        if (browserProblem=="type2"){
+            var problem="Error: The Geolocation service failed."
         }else{
-                if (browserProblem=="type2"){
-                    var problem="Error: The Geolocation service failed."
-                }else{
-                    var problem="Error: Your browser doesn't support geolocation."
-                }
-        };
+            var problem="Error: Your browser doesn't support geolocation."
+        }
+    };
 	locationWindow.setContent(problem);
-        locationWindow.open(map);
- }
+    locationWindow.open(map);
+}
+
 //Calculate And Display Route with google direction API, this function is learnt from Google map direction API sample
 function calculateAndDisplayRoute(directionsService, directionsRenderer) {
-       directionsService.route({
-                origin: {query: document.getElementById("start").value,},
-                destination: {query: document.getElementById("end").value,},
-                travelMode: google.maps.TravelMode.BICYCLING,
-       },(response, status) => {
-                if (status === "OK") {
-                    directionsRenderer.setDirections(response);
-                } else {
-                    window.alert("Directions request failed due to " + status);
-                }
-            }
-        );
+    directionsService.route({
+        origin: {query: document.getElementById("start").value,},
+        destination: {query: document.getElementById("end").value,},
+        travelMode: google.maps.TravelMode.BICYCLING,
+    },(response, status) => {
+        if (status === "OK") {
+            directionsRenderer.setDirections(response);
+        } else {
+            window.alert("Directions request failed due to " + status);
+        }
+    });
 }
 //Display the station the user is searching for on the map with google geocoding API, this function is learnt from Google map reverse geocoding API sample
 function geocodeLatLng(geocoder, map, searchwindow) {
-                var searchInput=document.getElementById("search_datalist").value;
-                if(!searchInput) return;
-                var position= document.querySelector("#station_datalist"+" option[value='"+searchInput+"']").dataset.value;
-                const latlngStr = position.split(",", 2);
-                const latlng = {
-                    lat: parseFloat(latlngStr[0]),
-                    lng: parseFloat(latlngStr[1]),
-                };
-                geocoder.geocode({ location: latlng }, (results, status) => {
-                    if (status === "OK") {
-                        if (results[0]) {
-                            map.setZoom(14);
-                            const marker = new google.maps.Marker({
-                                position: latlng,
-                                map: map,
-                                });
-                            searchwindow.setContent(results[0].formatted_address);
-                            searchwindow.open(map, marker);
-                        } else {
-                            window.alert("No results found");
-                        }
-                    } else {
-                        window.alert("Geocoder failed due to: " + status);
-                    }
+    var searchInput=document.getElementById("search_datalist").value;
+    if(!searchInput) return;
+    var position= document.querySelector("#station_datalist"+" option[value='"+searchInput+"']").dataset.value;
+    const latlngStr = position.split(",", 2);
+    const latlng = {
+        lat: parseFloat(latlngStr[0]),
+        lng: parseFloat(latlngStr[1]),
+    };
+    geocoder.geocode({ location: latlng }, (results, status) => {
+        if (status === "OK") {
+            if (results[0]) {
+                map.setZoom(14);
+                const marker = new google.maps.Marker({
+                    position: latlng,
+                    map: map,
                 });
+                searchwindow.setContent(results[0].formatted_address);
+                searchwindow.open(map, marker);
+            } else {
+            window.alert("No results found");
+            }
+        } else {
+            window.alert("Geocoder failed due to: " + status);
+        }
+    });
 }
 // Shows bikes availability on the marker
 
@@ -304,20 +304,19 @@ function change_labels(x){
 
 // Show/Hide the markers0.
 function showhideMarkers() {
-            if(document.getElementById("banking_switch").checked == true){
-                //Show markers0
-                for (let i = 0; i < markers0.length; i++) {
-                  markers0[i].setMap(map);
-                }
-                //document.getElementById("banking_switch").checked = false;
-            }else{
-                //Hide markers0
-                for (let i = 0; i < markers0.length; i++) {
-                  markers0[i].setMap(null);
-                }
-                //document.getElementById("banking_switch").checked = true;
-            }
+    if(document.getElementById("banking_switch").checked == true){
+    //Show markers0
+    for (let i = 0; i < markers0.length; i++) {
+        markers0[i].setMap(map);
+    }
+    }else{
+        //Hide markers0
+        for (let i = 0; i < markers0.length; i++) {
+        markers0[i].setMap(null);
+        }
+    }
 }
+
 //Fetches and Returns current Weather
 function get_current_weather(id) {
     fetch("/get_weather").then(response => response.json())
