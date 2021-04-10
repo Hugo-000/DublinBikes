@@ -10,15 +10,18 @@
       <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+      
       <link href="{{url_for('static',filename='style.css')}}" rel="stylesheet" type="text/css" />
       <script src= "static/scripts.js"></script>
       <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+      
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+
   </head>
 
-
+    
 <body>
-
+      
     <div class = "row bg-dark">
         <div class = "col-sm-2">
             <img src = "static/pictures/dublinbikes-vector-logo-removebg-preview.png" class="img-fluid">
@@ -56,23 +59,48 @@
             <select id="end"></select>
         </div>
     </div>
-
+        
     <div class = "row bg-light">
         <div class="col-sm-7">
             <div id="map" class = "map-responsive"></div>
-            
         </div>
         <div class = "col-sm-2">
             <div id ="weather" class="text-center"></div>
         </div>
         <div class = "col-sm-3">
             <div id = "prediction-time">
-                <!-- Put the prediction stuff in here -->
+                    <input type="date" id="date"
+                        name="date" value = "{{ minTime.date() }}",
+                        min="{{ minTime.date() }}", max="{{ maxTime.date() }}">
+
+                    <select id="time">
+                        <option value="05:00">05:00-6:00</option>
+                        <option value="06:00">06:00-7:00</option>
+                        <option value="07:00">07:00-8:00</option>
+                        <option value="08:00">08:00-09:00</option>
+                        <option value="09:00">09:00-10:00</option>
+                        <option value="10:00">10:00-11:00</option>
+                        <option value="11:00">11:00-12:00</option>
+                        <option value="12:00">12:00-13:00</option>
+                        <option value="13:00">13:00-14:00</option>
+                        <option value="14:00">14:00-15:00</option>
+                        <option value="15:00">15:00-16:00</option>
+                        <option value="16:00">16:00-17:00</option>
+                        <option value="17:00">17:00-18:00</option>
+                        <option value="18:00">18:00-19:00</option>
+                        <option value="19:00">19:00-20:00</option>
+                        <option value="20:00">20:00-21:00</option>
+                        <option value="21:00">21:00-22:00</option>
+                        <option value="22:00">22:00-23:00</option>
+                        <option value="23:00">23:00-24:00</option>
+                    </select>
+
+                     <label class="form-check-label text-dark">
+                        <input type="checkbox" class="form-check-input" id="prediction_switch" unchecked /> Show predictions
+                    </label>
             </div>
         </div>
     </div>
-
-
 
     <div class = "row">
         <div class="col-sm-12">
