@@ -1,7 +1,79 @@
 
-#map {
-  height: 100%;
+.map-responsive{
+    overflow:hidden;
+    padding-bottom:50%;
+    position:relative;
+    height:0;
 }
+.map-responsive iframe{
+    left:0;
+    top:0;
+    height:100%;
+    width:100%;
+    position:absolute;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+
+#Week_Charts {
+    position: absolute;
+    top: 0;
+    display: none;
+    padding: 0;
+    margin: 0;
+}
+/*
+#search_button {
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    transition-duration: 0.4s;
+    cursor: pointer;
+    padding: 5px 15px;
+    font-size: 30px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    color: white;
+    background-color: transparent;
+    border: 2px solid #008CBA;
+    border-radius: 15px;
+    box-shadow: 0 9px grey;
+}
+
+#search_button:hover {
+	background-color: #008CBA;
+}
+#search_button:active {
+    background-color: ;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+}*/
+
+/*
+#map {
+  height: 70%;
+  width: 70%;
+  display: inline-block;
+}
+
+#weather{
+   width: 30%;
+  display: inline-block;
+  float:right;
+}
+
+#Week_Charts{
+    height: 30%;
+
+}
+
 
 html,
 body {
@@ -9,3 +81,5 @@ body {
   margin: 0;
   padding: 0;
 }
+*/
+
