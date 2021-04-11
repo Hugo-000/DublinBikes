@@ -40,12 +40,18 @@
             </div>
             <div class="col-md-4 col-xl-2">
                 <h5>Filter Options</h5>
-                <label class="form-check-label text-light">
-                    <input type="checkbox" class="form-check-input" id="graph_button">Show Weekly Data
-                </label>
-                <label class="form-check-label text-light">
-                    <input onclick="showhideMarkers();" type="checkbox" class="form-check-input" id="banking_switch"  checked>Show Stations without Payment Terminals
-                </label>
+                <ul class="list-unstyled">
+                    <li>
+                        <label class="form-check-label text-light">
+                            <input type="checkbox" class="form-check-input" id="graph_button">Show Weekly Data
+                        </label>
+                    </li>
+                    <li>
+                        <label class="form-check-label text-light">
+                            <input onclick="showhideMarkers();" type="checkbox" class="form-check-input" id="banking_switch"  checked>Show Stations without Payment Terminals
+                        </label>
+                    </li>
+                </ul>
             </div>
             <div class="col-md-4 col-xl-2">
                 <h5>Marker Labels</h5>
@@ -136,15 +142,6 @@
             </div>
         </div>
     </div>
-    <!--
-    <script>
-        $(document).ready(function(){
-            $("#graph_button").click(function(){
-                $("#Week_Charts").slideToggle();
-            });
-        });
-    </script>
-    -->
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAubX7dljs_6l5yelGgSdoKArHWgYTwSdk&callback=initCharts&libraries=&v=weekly" async ></script>
 
 </body>
