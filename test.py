@@ -115,6 +115,20 @@ class FlaskTestCase(unittest.TestCase):
                 break
 
         self.assertTrue(test)
+
+    #Ensure get_prediction loads for specific stations and time
+    def test_get_prediction_loads(self):
+        tester = app.test_client(self)
+        response = tester.get('/get_prediction/2/2021-04-12T00:50', content_type='html/text')
+        self.assertEqual(response.status_code, 200)
+
+    #Ensure get_prediction data is valid for specific stations and time
+    def test_get_prediction_format(self):
+        tester = app.test_client(self)
+        response = tester.get('/get_prediction/2/2021-04-12T00:50', content_type='html/text')
+        data = json.loads(response.data)
+        self.assertEqual(type(data), int)
+
         
 if __name__ == '__main__':
     unittest.main()
