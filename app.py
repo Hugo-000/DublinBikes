@@ -69,7 +69,7 @@ def prediction(station_id, time):
         "mysql+mysqlconnector://{}:{}@{}:{}/{}".format(dbinfo.USER, dbinfo.PASSWORD, dbinfo.URI, dbinfo.PORT,
                                                        dbinfo.DB), echo=True)
     time = dt.datetime.strptime(time, "%Y-%m-%dT%H:%M")
-    df = pd.read_sql("SELECT * FROM daily_predictions WHERE date(time) = '{}'".format(time.date()), engine)
+    df = pd.read_sql("SELECT temp_day,humidity,wind_speed,main FROM daily_predictions WHERE date(time) = '{}'".format(time.date()), engine)
     weather = df.to_dict(orient='records')
 
     with open('Pickle_Files_Knn/scale_station_{}.pkl'.format(station_id), 'rb') as handle:
