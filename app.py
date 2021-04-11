@@ -10,16 +10,6 @@ import pickle
 
 app = Flask(__name__)
 
-@app.route("/prototype")
-def prototype():
-    engine = create_engine(
-        "mysql+mysqlconnector://{}:{}@{}:{}/{}".format(dbinfo.USER, dbinfo.PASSWORD, dbinfo.URI, dbinfo.PORT,
-                                                       dbinfo.DB), echo=True)
-    df = pd.read_sql("SELECT max(time) FROM daily_predictions;", engine)
-    now = dt.datetime.now(tz=pytz.timezone('Europe/Dublin'))
-    maxTime = df.to_dict(orient='records')
-    return render_template("test.html", maxTime=maxTime[0]['max(time)'], minTime=now)
-
 #for accessing map.html
 @app.route("/")
 def map():
@@ -65,7 +55,7 @@ def availability():
 def week_availability(station_id):
     engine = create_engine("mysql+mysqlconnector://{}:{}@{}:{}/{}".format(dbinfo.USER, dbinfo.PASSWORD, dbinfo.URI, dbinfo.PORT, dbinfo.DB), echo=True)
     now = dt.datetime.now(tz=pytz.timezone('Europe/Dublin'))
-    df = pd.read_sql("SELECT * FROM availability WHERE number = {} and last_update >= date_add('{}', interval -5 DAY) order by last_update desc;".format(station_id, now), engine)
+    df = pd.read_sql("SELECT last_update, available_bikes, available_bike_stands FROM availability WHERE number = {} and last_update >= date_add('{}', interval -5 DAY) order by last_update desc;".format(station_id, now), engine)
     resampled_df = df.set_index('last_update').resample('H').mean()
     resampled_df['last_update'] = resampled_df.index
     return resampled_df.to_json(orient='records')
