@@ -79,16 +79,15 @@ for station in stations:
         mean, std = scale.mean_, scale.var_
         scaled[i] = [mean, std]
 
-    with open('scale_station_{}.pkl'.format(station), 'wb') as f:
+    with open('Scale_{}.pkl'.format(station), 'wb') as f:
         pickle.dump(scaled, f, pickle.HIGHEST_PROTOCOL)
 
     # test-train split
     X_train, X_test, Y_train, Y_test = train_test_split(X_stand, y, test_size=0.3, random_state=0)
 
-    # final model using unscaled trainng data
     knnmodel = KNeighborsClassifier(n_neighbors=3)
     knnmodel.fit(X_train, Y_train)
 
-    with open('Model_station_{}.pkl'.format(station), 'wb') as handle:
+    with open('Model_{}.pkl'.format(station), 'wb') as handle:
         pickle.dump(knnmodel, handle, pickle.HIGHEST_PROTOCOL)
 
