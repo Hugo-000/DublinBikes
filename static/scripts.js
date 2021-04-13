@@ -168,11 +168,12 @@ function displayPrediction(station) {
     fetch("/get_prediction/"+station.number+"/"+String(date) +"T" + time).then (response => {
         return response.json();
     }).then(prediction => {
-        content = "<h5>" + station.name + "</h5><ul class='list-unstyled'><li>" +
+        /*content = "<h5>" + station.name + "</h5><ul class='list-unstyled'><li>" +
             "Station No: " + station.number + "</li><li>"
             + date + "T" + time + "</li><li>" +
             "Predicted Bikes: " + prediction + "</li>";
-        document.getElementById("display-prediction").innerHTML = content;
+        document.getElementById("display-prediction").innerHTML = content;*/
+        console.log(prediction)
     });
     }
 
@@ -264,12 +265,9 @@ function geocodeLatLng(geocoder, map, searchwindow) {
         if (status === "OK") {
             if (results[0]) {
                 map.setZoom(14);
-                const marker = new google.maps.Marker({
-                    position: latlng,
-                    map: map,
-                });
                 searchwindow.setContent(results[0].formatted_address);
-                searchwindow.open(map, marker);
+                searchwindow.setPosition(latlng);
+                searchwindow.open(map);
             } else {
             window.alert("No results found");
             }

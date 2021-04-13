@@ -78,6 +78,7 @@ def prediction(station_id, time):
     input = [(weather[0]['temp_day'] - scaled['temp'][0]) / scaled['temp'][1],
              (weather[0]['humidity'] - scaled['humidity'][0]) / scaled['humidity'][1],
              (weather[0]['wind_speed'] - scaled['wind_speed'][0]) / scaled['wind_speed'][1]]
+    
 
     weather_type = [0] * 7
     if weather[0]['main'] == "Clear":
@@ -97,16 +98,17 @@ def prediction(station_id, time):
     else:
         raise Exception("Weather of type {} Not accounted for".format(weather[0]['main']))
 
-    hour = [0] * 19
-    hour[time.hour - 5] = 1;
-
+    if time.hour >= 5:
+        hour = [0] * 19
+        hour[time.hour - 5] = 1;
+    else: 
+        raise Exception("Time requested is not covered by our predictive model")
     day = [0] * 7
     day[time.weekday()] = 1
 
     input.extend(weather_type)
     input.extend(hour)
     input.extend(day)
-
     with open('Pickle_Files_Knn/Model_station_{}.pkl'.format(station_id), 'rb') as handle:
         model = pickle.load(handle)
 
