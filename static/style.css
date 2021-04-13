@@ -27,36 +27,7 @@ html, body {
     padding: 0;
     margin: 0;
 }
-/*
-#search_button {
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    transition-duration: 0.4s;
-    cursor: pointer;
-    padding: 5px 15px;
-    font-size: 30px;
-    cursor: pointer;
-    text-align: center;
-    text-decoration: none;
-    outline: none;
-    color: white;
-    background-color: transparent;
-    border: 2px solid #008CBA;
-    border-radius: 15px;
-    box-shadow: 0 9px grey;
-}
 
-#search_button:hover {
-	background-color: #008CBA;
-}
-#search_button:active {
-    background-color: ;
-    box-shadow: 0 5px #666;
-    transform: translateY(4px);
-}*/
-
-/*
 #map {
   height: 70%;
   width: 70%;
