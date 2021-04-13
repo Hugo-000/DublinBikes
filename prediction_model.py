@@ -83,7 +83,7 @@ for station in stations:
         pickle.dump(scaled, f, pickle.HIGHEST_PROTOCOL)
 
     # test-train split
-    X_train, X_test, Y_train, Y_test = train_test_split(x, y, test_size=0.3, random_state=0)
+    X_train, X_test, Y_train, Y_test = train_test_split(X_stand, y, test_size=0.3, random_state=0)
 
     # final model using unscaled trainng data
     knnmodel = KNeighborsClassifier(n_neighbors=3)
