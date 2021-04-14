@@ -168,11 +168,11 @@ function displayPrediction(station) {
     fetch("/get_prediction/"+station.number+"/"+String(date) +"T" + time).then (response => {
         return response.json();
     }).then(prediction => {
-        /*content = "<h5>" + station.name + "</h5><ul class='list-unstyled'><li>" +
+        content = "<h5>" + station.name + "</h5><ul class='list-unstyled'><li>" +
             "Station No: " + station.number + "</li><li>"
             + date + "T" + time + "</li><li>" +
             "Predicted Bikes: " + prediction + "</li>";
-        document.getElementById("display-prediction").innerHTML = content;*/
+        document.getElementById("display-prediction").innerHTML = content;
         console.log(prediction)
     });
     }
