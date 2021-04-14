@@ -173,7 +173,6 @@ function displayPrediction(station) {
             + date + "T" + time + "</li><li>" +
             "Predicted Bikes: " + prediction + "</li>";
         document.getElementById("display-prediction").innerHTML = content;
-        console.log(prediction)
     });
     }
 
