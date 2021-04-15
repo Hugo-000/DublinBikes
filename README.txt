@@ -37,6 +37,10 @@ prediction_model.py
 The prediction model used to predict the bikes available in
 a dublin bike station at a later date.
 
+Predictive_Model_Testing.ipynb
+Jupyter notebook used for testing and evaluating various possible 
+predictive models.
+
 templates/map.html
 The only html template used in this application. Is the main
 and only page of the app.
