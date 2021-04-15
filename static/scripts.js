@@ -168,10 +168,17 @@ function displayPrediction(station) {
     fetch("/get_prediction/"+station.number+"/"+String(date) +"T" + time).then (response => {
         return response.json();
     }).then(prediction => {
-        content = "<h5>" + station.name + "</h5><ul class='list-unstyled'><li>" +
-            "Station No: " + station.number + "</li><li>"
-            + date + "T" + time + "</li><li>" +
-            "Predicted Bikes: " + prediction + "</li>";
+        if (typeof prediction[0] == "number"){
+            content = "<h5>" + station.name + "</h5><ul class='list-unstyled'><li>" +
+                "Station No: " + station.number + "</li><li>"
+                + date + "</li><li>"
+                + time + "</li><li>"
+                + prediction[1] + "</li><li>"
+                + prediction[2] + "C</li><li>"
+                + "Predicted Bikes: " + prediction[0] + "</li>";            
+        } else {
+            content = "<h5>" + prediction[0] + "</h5>";
+        }
         document.getElementById("display-prediction").innerHTML = content;
     });
     }

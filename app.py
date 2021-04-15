@@ -7,7 +7,7 @@ import datetime as dt
 import pytz
 from functools import lru_cache
 import pickle
-
+import os
 app = Flask(__name__)
 
 #for accessing map.html
@@ -65,11 +65,16 @@ def week_availability(station_id):
 
 @app.route("/get_prediction/<int:station_id>/<string:time>")
 def prediction(station_id, time):
-    engine = create_engine(
-        "mysql+mysqlconnector://{}:{}@{}:{}/{}".format(dbinfo.USER, dbinfo.PASSWORD, dbinfo.URI, dbinfo.PORT,
-                                                       dbinfo.DB), echo=True)
+    #Check If predictive data about station exists
+    if not os.path.exists('Pickle_Files_Knn/Scale_{}.pkl'.format(station_id)) or not os.path.exists('Pickle_Files_Knn/Model_{}.pkl'.format(station_id)):
+        return jsonify(['Error: Predictive Model not Found'])
+    
+    engine = create_engine( "mysql+mysqlconnector://{}:{}@{}:{}/{}".format(dbinfo.USER, dbinfo.PASSWORD, dbinfo.URI, dbinfo.PORT,dbinfo.DB), echo=True)
     time = dt.datetime.strptime(time, "%Y-%m-%dT%H:%M")
     df = pd.read_sql("SELECT * FROM daily_predictions WHERE date(time) = '{}'".format(time.date()), engine)
+    if df.empty:
+        return jsonify(['Error: Weather Data Not Found'])
+    
     weather = df.to_dict(orient='records')
 
     with open('Pickle_Files_Knn/Scale_{}.pkl'.format(station_id), 'rb') as handle:
@@ -96,13 +101,13 @@ def prediction(station_id, time):
     elif weather[0]['main'] == "Snow":
         weather_type[6] = 1
     else:
-        raise Exception("Weather of type {} Not accounted for".format(weather[0]['main']))
+        return jsonify(["Weather of type {} Not accounted for".format(weather[0]['main'])])
 
     if time.hour >= 5:
         hour = [0] * 19
         hour[time.hour - 5] = 1;
     else: 
-        raise Exception("Time requested is not covered by our predictive model")
+        return jsonify(["Time requested is not covered by our predictive model"])
     day = [0] * 7
     day[time.weekday()] = 1
 
@@ -115,7 +120,7 @@ def prediction(station_id, time):
     result = model.predict([input])
     result = int(result)
 
-    return jsonify(result)  # placeholder
+    return jsonify([result, weather[0]['main'], weather[0]['temp_day']])
 
 
 if __name__ == "__main__":

@@ -1,6 +1,7 @@
 from app import app
 import unittest
 import json
+import datetime as dt
 
 STATION_COUNT= 109
 
@@ -119,15 +120,39 @@ class FlaskTestCase(unittest.TestCase):
     #Ensure get_prediction loads for specific stations and time
     def test_get_prediction_loads(self):
         tester = app.test_client(self)
-        response = tester.get('/get_prediction/2/2021-04-20T05:00', content_type='html/text')
+        tomorrow = dt.date.today()
+        tomorrow += dt.timedelta(days=1)
+        response = tester.get('/get_prediction/2/{}T06:00'.format(tomorrow.strftime('%Y-%m-%d')), content_type='html/text')
         self.assertEqual(response.status_code, 200)
 
-    #Ensure get_prediction data is valid for specific stations and time
+    #Ensure get_prediction data is in a valid format
     def test_get_prediction_format(self):
         tester = app.test_client(self)
-        response = tester.get('/get_prediction/2/2021-04-20T05:00', content_type='html/text')
+        tomorrow = dt.date.today()
+        tomorrow += dt.timedelta(days=1)
+        response = tester.get('/get_prediction/2/{}T06:00'.format(tomorrow.strftime('%Y-%m-%d')), content_type='html/text')
         data = json.loads(response.data)
-        self.assertEqual(type(data), int)
-
+        expected_types = ["<class 'int'>", "<class 'str'>", "<class 'float'>"]
+        types = [str(type(val)) for val in data]
+        self.assertEqual(types, expected_types)
+     
+    #Test if correct error message shown when a station that doesn't exist is requested   
+    def test_get_prediction_wrong1(self):
+        tester = app.test_client(self)
+        tomorrow = dt.date.today()
+        tomorrow += dt.timedelta(days=1)
+        response = tester.get('/get_prediction/1/{}T06:00'.format(tomorrow.strftime('%Y-%m-%d')), content_type='html/text')
+        data = json.loads(response.data)
+        self.assertEqual(data[0], 'Error: Predictive Model not Found')
+    
+    #Test if correct error message shown when a time we don't have data for is requested
+    def test_get_prediction_wrong2(self):
+        tester = app.test_client(self)
+        day = dt.date.today()
+        day -= dt.timedelta(days=3)
+        response = tester.get('/get_prediction/2/{}T06:00'.format(day.strftime('%Y-%m-%d')), content_type='html/text')
+        data = json.loads(response.data)
+        self.assertEqual(data[0], 'Error: Weather Data Not Found')
+    
 if __name__ == '__main__':
     unittest.main() 
